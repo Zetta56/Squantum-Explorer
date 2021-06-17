@@ -1355,6 +1355,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e8aab06684db8542812cf4a9722abcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crosshair: {fileID: 0}
+  magnet: {fileID: 0}
 --- !u!1 &423415355
 GameObject:
   m_ObjectHideFlags: 0
@@ -8799,6 +8801,10 @@ PrefabInstance:
     - target: {fileID: 1495462929186986358, guid: ef7b05e90d34cda49883d3ba43c06ef2, type: 3}
       propertyPath: maxHealth
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495462929186986358, guid: ef7b05e90d34cda49883d3ba43c06ef2, type: 3}
+      propertyPath: damageRate
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3888705267674555166, guid: ef7b05e90d34cda49883d3ba43c06ef2, type: 3}
       propertyPath: m_IsActive

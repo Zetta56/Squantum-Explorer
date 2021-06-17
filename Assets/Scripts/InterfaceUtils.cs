@@ -10,7 +10,8 @@ public class InterfaceUtils : MonoBehaviour
     private PlayerController player;
     private ShipController ship;
     private Slider fuel, durability, scrap;
-    private TextMeshProUGUI crosshair;
+    public TextMeshProUGUI crosshair;
+    public Image magnet;
     private TextMeshProUGUI score;
     private Image Indicator;
     private float scoreValue = 0f;
@@ -24,6 +25,8 @@ public class InterfaceUtils : MonoBehaviour
         score = transform.Find("Score").GetComponent<TextMeshProUGUI>();
         crosshair = transform.Find("Crosshair").GetComponent<TextMeshProUGUI>();
         Indicator = transform.Find("Indicator").GetComponent<Image>();
+        magnet = transform.Find("Magnet").GetComponent<Image>();
+        magnet.enabled = false;
 
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         ship = GameObject.Find("Spaceship").GetComponent<ShipController>();

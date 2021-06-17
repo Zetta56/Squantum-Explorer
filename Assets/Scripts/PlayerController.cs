@@ -358,12 +358,16 @@ public class PlayerController : MonoBehaviour
                 targetObj = ship.transform;
                 returning = true;
                 rb.velocity = new Vector3();
+                interfaceUtils.crosshair.enabled = false;
+                interfaceUtils.magnet.enabled = true;
             }
         }
 
         if (Input.GetMouseButtonUp(1)) {
             returning = false;
             audioSource.Stop();
+            interfaceUtils.crosshair.enabled = true;
+            interfaceUtils.magnet.enabled = false;
         }
 
         if(targetObj !=null && !targetObj.GetComponent<MeshRenderer>().enabled){
