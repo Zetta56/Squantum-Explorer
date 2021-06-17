@@ -8,8 +8,8 @@ Build up your score by slamming your squantum body into the surrounding asteroid
 
 # Controls
 
-Use WASD or arrow keys to move around
-Press space to ascend
-Press shift to descend
-Left click to grapple onto asteroids and pull scrap towards you
-Right click to return to ship - away from the dangerous asteroids!
+- Use WASD or arrow keys to move around
+- Press space to ascend
+- Press shift to descend
+- Left click to grapple onto asteroids and pull scrap towards you
+- Right click to return to ship - away from the dangerous asteroids!
