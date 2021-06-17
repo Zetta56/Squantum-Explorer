@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="alarm_data" version="1.3.0" audacityversion="2.3.1" sel0="0.0000000000" sel1="0.6273037448" vpos="0" h="0.0000000000" zoom="45.4243149774" rate="48000.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags/>
+	<wavetrack name="alexander_gastrell_alarm_warning_alert_signal_loop_designed_08_018" channel="0" linked="1" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="48000" gain="0.177828" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="30111">
+				<waveblock start="0">
+					<simpleblockfile filename="e080858c.au" len="30111" min="-1.006134" max="1.001827" rms="0.210789"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="alexander_gastrell_alarm_warning_alert_signal_loop_designed_08_018" channel="1" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="48000" gain="0.177828" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="30111">
+				<waveblock start="0">
+					<simpleblockfile filename="e08084f0.au" len="30111" min="-1.009988" max="1.021502" rms="0.211056"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>
