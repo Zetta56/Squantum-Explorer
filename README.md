@@ -13,3 +13,8 @@ Build up your score by slamming your squantum body into the surrounding asteroid
 - Press shift to descend
 - Left click to grapple onto asteroids and pull scrap towards you
 - Right click to return to ship - away from the dangerous asteroids!
+
+# Credits
+
+*Music: [Space Music/Sci-fi] by Alexander Nakarada (www.serpentsoundstudios.com)
+Licensed under Creative Commons BY Attribution 4.0 License*
