@@ -17,7 +17,7 @@ Build up your score by slamming your squantum body into the surrounding asteroid
 - Right click to return to ship - away from the dangerous asteroids!
 
 ## Usage
-1. Run `git clone https://github.com/Zetta56/squantum-explorer`
+1. Run `git clone https://github.com/Zetta56/Squantum-Explorer`
 2. Add the project to Unity Hub
 3. Open it in the Unity Editor
 
