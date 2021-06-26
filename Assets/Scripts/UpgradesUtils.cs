@@ -156,6 +156,7 @@ public class UpgradesUtils : MonoBehaviour
 
     void Heal() {
         ship.health = ship.maxHealth;
+        ship.DeathSounded = false;
     }
 
     void Clear() {

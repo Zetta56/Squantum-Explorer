@@ -56,9 +56,9 @@ GameObject:
   - component: {fileID: 8158291262193071557}
   - component: {fileID: 6259130351082275087}
   - component: {fileID: -4156257684676697307}
-  - component: {fileID: 4577771033289823444}
   - component: {fileID: -1405902114300823018}
   - component: {fileID: 3434525482537950240}
+  - component: {fileID: 5634423827201332133}
   m_Layer: 0
   m_Name: Asteroid
   m_TagString: Untagged
@@ -145,22 +145,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.016348789
   m_Center: {x: -0.00033913925, y: -0.00037342025, z: 0.00031195063}
---- !u!114 &4577771033289823444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5610387361080778970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d889b75ced3af5d5afd9e69b1989ab9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 10
-  target: {fileID: 0}
-  boom: {fileID: 8300000, guid: cada50be999d2e44a887f3fbf31aaa50, type: 3}
-  Break: {fileID: 5629160854492661247}
 --- !u!54 &-1405902114300823018
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -273,6 +257,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5634423827201332133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5610387361080778970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30a631b99d3a91948aa5e568c5fe3f0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  isDestroying: 0
+  boom: {fileID: 8300000, guid: cada50be999d2e44a887f3fbf31aaa50, type: 3}
+  Volume: 0.3
 --- !u!1 &6289224174067605785
 GameObject:
   m_ObjectHideFlags: 0
@@ -5133,8 +5133,7 @@ ParticleSystemRenderer:
   m_RotateWithStretchDirection: 1
   m_VertexStreams: 00010304
   m_Mesh: {fileID: -688602771959139187, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
-  m_Mesh1: {fileID: -2314889690101908075, guid: 255b00dc82a22304ba9c0d85a5f317ec,
-    type: 3}
+  m_Mesh1: {fileID: -2314889690101908075, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
   m_Mesh2: {fileID: 4507555510371623389, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
   m_Mesh3: {fileID: 5665568821005082828, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
   m_MaskInteraction: 0

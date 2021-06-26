@@ -17,6 +17,7 @@ public class ShipController : MonoBehaviour
     public float Volume = 0.3f;
     public AudioClip alarm;
     public AudioClip BoomBoom;
+    public bool DeathSounded = false;
 
     private InterfaceUtils interfaceUtils;
     private ParticleSystem fire, smoke, shrapnel;
@@ -72,6 +73,14 @@ public class ShipController : MonoBehaviour
             }
             exploding++;
         }
+
+        if(health <= 0.1f * maxHealth && !DeathSounded){
+            DeathSounded = true;
+            for(int i = 0; i < 3; i++){
+                StartCoroutine(WaitToPlay(i));
+            }
+            
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -96,8 +105,8 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    public void Hit(){
-        health -= damageRate * Mathf.Log10(10 + interfaceUtils.GetScore() / 100);
+    public void Hit(float multiplier){
+        health -= multiplier * damageRate * Mathf.Log10(10 + interfaceUtils.GetScore() / 100);
         audioSource.PlayOneShot(alarm, Volume); // StateController.Get<float>("SFX", 0.5f)*0.01f);
         if(health <= 0f) {
             exploding = 1;
@@ -122,5 +131,10 @@ public class ShipController : MonoBehaviour
         DJ.transform.parent = null;
         DontDestroyOnLoad(DJ);
         SceneManager.LoadScene("GameOver");
+    }
+
+    IEnumerator WaitToPlay(int i){
+        yield return new WaitForSeconds(0.627f * i);
+        audioSource.PlayOneShot(alarm, Volume*1.5f);
     }
 }

@@ -13,15 +13,16 @@ public class PlayerController : MonoBehaviour
     public float fuelCost = 30;
     public float magnetGrowth = 0.1f;
     public float maxScrap = 10;
+    public float comboTimeSubtractor = 4f;
 
     [Space(25)]
     [Header("Movement")]
     [Space(10)]
-    public float speed = 500;
-    public float tetherDistance = 50f;
-    public float tetherSpeed = 100f;
-    public float grapplingSpeed = 50f;
-    public float grapplingLength = 1000f;
+    public float speed = 1000;
+    public float tetherDistance = 75f;
+    public float tetherSpeed = 25f;
+    public float grapplingSpeed = 100f;
+    public float grapplingLength = 50f;
     public float gravity = 0.005f;
     public float sensitivity = 0.005f;
 
@@ -53,21 +54,21 @@ public class PlayerController : MonoBehaviour
     [Space(10)]
     public AudioSource audioSource;
     public float fuel;
-    public float IndicatorAlpha;
+    public float indicatorAlpha;
     public float scrap = 0;
     public float scrapBonus = 0;
+    public int combo = 1;
 
     //private
     private Rigidbody rb;
     private GameObject ship;
-    private GameObject magnet;
-    private SphereCollider magnetCollider;
+    private SphereCollider magnet;
     private GameObject DJ;
     private LineRenderer hookShot, tether;
     private InterfaceUtils interfaceUtils;
     private GameObject upgrades;
     private GameObject pause;
-    private Transform targetObj;
+    private Transform target;
     private Vector3 forwardForce;
     private Vector3 rightForce;
     private Vector3 upForce;
@@ -76,6 +77,7 @@ public class PlayerController : MonoBehaviour
     private bool grappling = false;
     private float mouseX = 0f;
     private float mouseY = 0f;
+    private float LastBoomBoom = 0f;
 
     void Awake()
     {
@@ -96,9 +98,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
         pause.SetActive(false);
-        magnet = GameObject.Find("Magnet");
-        magnet.SetActive(false);
-        magnetCollider = magnet.GetComponent<SphereCollider>();
+        magnet = GameObject.Find("Magnet").GetComponent<SphereCollider>();
         ship = GameObject.Find("Spaceship");
 
         hookShot = transform.Find("Hookshot").GetComponent<LineRenderer>();
@@ -129,42 +129,52 @@ public class PlayerController : MonoBehaviour
         if (touchingShip)
             fuel = maxFuel;
 
-        if (grappling && targetObj != null){
-            hookShot.SetPosition(1, targetObj.position);
+        if (grappling && target != null){
+            hookShot.SetPosition(1, target.position);
         }
 
-        float DistanceFromShip = (ship.transform.position-transform.position).magnitude;
+        float DistanceFromShip = Vector3.Distance(ship.transform.position, transform.position);
 
         // Move towards ship when too far
         if (DistanceFromShip >= tetherDistance) {
-            transform.position = Vector3.MoveTowards(transform.position, ship.transform.position, .1f);
+            transform.position = Vector3.MoveTowards(transform.position, ship.transform.position, 1f);
+            rb.velocity /= 3;
         }
 
-        //if(DistanceFromShip > tetherDistance/2f){
-        IndicatorAlpha = Map(DistanceFromShip, 0f, tetherDistance, 0f, 100f);
-        //}
+        indicatorAlpha = Map(DistanceFromShip, 0f, tetherDistance, 0f, 100f);
 
         if(Input.GetKeyDown(KeyCode.E) && touchingShip) {
             returning = false;
             ToggleMenu(upgrades);
             returning = false;
+            interfaceUtils.crosshair.enabled = true;
+            interfaceUtils.magnet.enabled = false;
         }
-
-        if(Input.GetKeyDown(KeyCode.Escape) && !upgrades.activeSelf) {
-            ToggleMenu(pause);
-        }
-
         if(!upgrades.activeSelf && !pause.activeSelf){
             UpdateCamera();
             UpdateJetpack();
             UpdateTethers();
         }
 
+        if(Input.GetKeyDown(KeyCode.Escape)){
+            if(upgrades.activeSelf){
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                returning = false;
+                ToggleMenu(upgrades);
+                returning = false;
+            } else{
+                ToggleMenu(pause);
+            }
+        }
+
+        
+
     }
 
     void FixedUpdate()
     {
-        if (targetObj == null)
+        if (target == null)
         {
             grappling = false;
             hookShot.enabled = false;
@@ -174,19 +184,21 @@ public class PlayerController : MonoBehaviour
         float resistance = rb.velocity.magnitude * 0.1f;
         rb.AddForce(resistance * -rb.velocity.normalized * 60 * Time.fixedDeltaTime);
 
-        if(returning || grappling && targetObj != null) {
+        if(returning || grappling && target != null) {
             float magnitude = grappling ? grapplingSpeed : tetherSpeed;
-            rb.velocity = magnitude * (targetObj.position - transform.position).normalized;
+            rb.velocity = magnitude * (target.position - transform.position).normalized;
         }
         if(returning && !touchingShip && !TestingMode) {
-            magnet.transform.localScale += new Vector3(magnetGrowth, magnetGrowth, magnetGrowth);
-            magnetCollider.radius += magnetGrowth / 2;
-            magnet.SetActive(true);
+            interfaceUtils.magnet.transform.localScale += Vector3.one * (magnetGrowth/6);
+
+            magnet.radius += magnetGrowth / 2;
         } else {
             rb.position -= new Vector3(0, gravity, 0);
-            magnet.transform.localScale = new Vector3(1, 1, 1);
-            magnetCollider.radius = 0.5f;
-            magnet.SetActive(false);
+            magnet.radius = 0.5f;
+            interfaceUtils.magnet.transform.localScale = Vector3.one;
+        }
+        if(Time.time - LastBoomBoom > comboTimeSubtractor){
+            combo = 1;
         }
     }
 
@@ -195,23 +207,20 @@ public class PlayerController : MonoBehaviour
             touchingShip = true;
             rb.velocity = new Vector3();    // Stop player movement
         }
-        if(collision.collider.name == "Asteroid(Clone)") {
-            IncrementScrap(3, false);
-            if(!TestingMode){
-                interfaceUtils.IncrementScore(100);
+        if(collision.collider.transform.parent && collision.collider.transform.parent.name == "Asteroid Spawner" &&
+           !collision.gameObject.GetComponent<AsteroidController>().isDestroying
+        ) {
+            if(Time.time - LastBoomBoom <= comboTimeSubtractor){
+                combo++;
+                interfaceUtils.ShowCombo();
             }
-            collision.collider.gameObject.GetComponent<AsteroidController>().DestroyAsteroid();
+            LastBoomBoom = Time.time;
+            collision.gameObject.GetComponent<AsteroidController>().DestroyAsteroid();
             rb.velocity /= 3;
-            if(GameObject.ReferenceEquals(targetObj, collision.collider.gameObject)) {
+            if(GameObject.ReferenceEquals(target, collision.collider.transform)) {
                 grappling = false;
+                target = null;
             }
-        }
-    }
-
-    void OnTriggerEnter(Collider trigger){
-        if(trigger.name == "Scrap(Clone)") {
-            Destroy(trigger.gameObject);
-            IncrementScrap(1, true);
         }
     }
 
@@ -223,7 +232,8 @@ public class PlayerController : MonoBehaviour
 
     public void IncrementScrap(int amount, bool playReject) {
         if(scrap < maxScrap){
-            scrap = amount + scrapBonus > maxScrap ? maxScrap : amount + scrapBonus;
+            float newScrap = scrap + amount + scrapBonus + (combo - 1);
+            scrap = newScrap > maxScrap ? maxScrap : newScrap;
             PlaySound(pickup);
         } else if(playReject) {
             PlaySound(reject);
@@ -320,7 +330,7 @@ public class PlayerController : MonoBehaviour
             RaycastHit hit;
             // out allows changes made to 'hit' to persist after leaving Raycast()'s scope
             if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, grapplingLength, 1 << 6)) {
-                targetObj = hit.transform;
+                target = hit.transform;
                 grappling = true;
                 rb.velocity = new Vector3();
 
@@ -330,8 +340,8 @@ public class PlayerController : MonoBehaviour
                 PlaySound(grapplingSound);
             }
             else if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, grapplingLength, 1 << 7)) {
-                targetObj = hit.transform;
-                targetObj.gameObject.GetComponent<ScrapController>().player = transform;
+                target = hit.transform;
+                target.gameObject.GetComponent<ScrapController>().grappling = true;
 
                 hookShot.enabled = true;
                 hookShot.SetPosition(1, hit.point);
@@ -346,8 +356,8 @@ public class PlayerController : MonoBehaviour
             audioSource.Stop();
             grappling = false;
             hookShot.enabled = false;
-            if(targetObj != null && targetObj.gameObject.GetComponent<ScrapController>()){
-                targetObj.gameObject.GetComponent<ScrapController>().player = null;
+            if(target != null && target.gameObject.GetComponent<ScrapController>()){
+                target.gameObject.GetComponent<ScrapController>().grappling = false;
             }
         }
 
@@ -355,7 +365,7 @@ public class PlayerController : MonoBehaviour
         if(Input.GetMouseButtonDown(1) && !grappling) {
             PlaySound(reel);
             if(!touchingShip) {
-                targetObj = ship.transform;
+                target = ship.transform;
                 returning = true;
                 rb.velocity = new Vector3();
                 interfaceUtils.crosshair.enabled = false;
@@ -370,9 +380,9 @@ public class PlayerController : MonoBehaviour
             interfaceUtils.magnet.enabled = false;
         }
 
-        if(targetObj !=null && !targetObj.GetComponent<MeshRenderer>().enabled){
-                grappling = false;
-                hookShot.enabled = false;
+        if(target != null && !target.GetComponent<MeshRenderer>().enabled){
+            grappling = false;
+            hookShot.enabled = false;
         }
 
         tether.SetPosition(0, transform.Find("Tether").position);
