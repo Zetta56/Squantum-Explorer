@@ -1,7 +1,5 @@
 # [Squantum Explorer!](https://itch.io/jam/gmtk-2021/rate/1083075)
 
-**CURRENT RELEASE IS NOT WORKING, HEAD OVER TO [OUR ITCH.IO PAGE](https://itch.io/jam/gmtk-2021/rate/1083075) TO GET THE LATEST FUNCTIONING RELEASE**
-
 You are a quantum squirrel travelling through space—but your ship's gravitational field broke! Now, everything, including asteroids and space junk, is being pulled towards the ship. It's up to you to protect it as long as you can!
 
 ## Task
