@@ -26,8 +26,7 @@ public class BossteroidController : AsteroidController
             if(health <= 0 || touchingShip){
                 base.DestroyAsteroid();
             } else{
-                Debug.Log(health);
-                playerRB.velocity = -playerRB.velocity.normalized * push;
+                playerRB.velocity = push * -playerRB.velocity.normalized;
                 StartCoroutine(TurnOffBreak());
             }
             
@@ -36,7 +35,7 @@ public class BossteroidController : AsteroidController
 
     IEnumerator TurnOffBreak()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         fragments.Stop();
     }
 }

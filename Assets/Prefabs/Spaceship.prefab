@@ -4997,12 +4997,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a8386bae37d83a4381d35cdcc3a022a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
-  damageRate: 5
   maxHealth: 100
-  Volume: 0.3
+  damageRate: 5
   alarm: {fileID: 8300000, guid: 47af15aa275939e49821bef6a5da353e, type: 3}
   BoomBoom: {fileID: 0}
+  DeathSounded: 0
+  Volume: 0.3
 --- !u!82 &1863761140
 AudioSource:
   m_ObjectHideFlags: 0

@@ -24,12 +24,6 @@ public class MainMenuUtils : MonoBehaviour
         screen5.transform.Find("Next").GetComponent<Button>().interactable = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void Quit(){
         Application.Quit();
     }

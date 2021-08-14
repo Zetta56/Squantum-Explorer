@@ -33,11 +33,4 @@ public class ScrapController : MonoBehaviour
             player.GetComponent<PlayerController>().IncrementScrap(1, true);
         }
     }
-
-    void OnTriggerEnter(Collider trigger){
-        if(trigger.name == "Magnet") {
-            Destroy(gameObject);
-            player.GetComponent<PlayerController>().IncrementScrap(1, true);
-        }
-    }
 }

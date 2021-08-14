@@ -99,7 +99,7 @@ MonoBehaviour:
   target: {fileID: 0}
   speed: 10
   moveSpeed: 100
-  player: {fileID: 0}
+  grappling: 0
 --- !u!135 &8838564564435638227
 SphereCollider:
   m_ObjectHideFlags: 0

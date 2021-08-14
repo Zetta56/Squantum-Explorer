@@ -3,69 +3,60 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// E
-// F
-using UnityEngine.UI;
-using System;
-using TMPro;
-
 public class ShipController : MonoBehaviour
 {
-    public float health;
-    public float damageRate = 5f;
     public float maxHealth = 100f;
-    public float Volume = 0.3f;
-    public AudioClip alarm;
-    public AudioClip BoomBoom;
-    public bool DeathSounded = false;
-
+    public float damageRate = 5f;
+    private float health;
+    private int exploding;
     private InterfaceUtils interfaceUtils;
     private ParticleSystem fire, smoke, shrapnel;
-    private Transform DJ;
-    private int exploding;
-    private AudioSource audioSource;
 
-    private Vector3 EOffScreen;
-    private Vector3 EOnScreen;
-    private IEnumerator lerpE;
-    private float Etime = 0.5f;
-    private float EcurrentTime = 0;
-    private float EnormalizedValue;
-    private RectTransform ERectangleTransform; //I am using all of my willpower to not leave it as ERect
-    
+    // Audio
+    private Transform DJ;
+    public AudioClip alarm;
+    public AudioClip BoomBoom;
+    private AudioSource audioSource;
+    public bool DeathSounded = false;
+    public float Volume = 0.3f;
 
     // Start is called before the first frame update
     void Start()
-    {
-        ERectangleTransform = GameObject.Find("UI/Interface/E").GetComponent<RectTransform>();
-        EOffScreen = ERectangleTransform.anchoredPosition;
-        EOnScreen = EOffScreen;
-        EOnScreen.x += 200;
-        
+    {   
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
+        audioSource = GetComponent<AudioSource>();
+        DJ = GameObject.Find("Player/DJ Wacky").transform;
+        health = maxHealth;
+
+        // Particle Initialization
         fire = transform.Find("Fire").GetComponent<ParticleSystem>();
         fire.Stop();
         smoke = transform.Find("Smoke").GetComponent<ParticleSystem>();
         smoke.Stop();
         shrapnel = transform.Find("Shrapnel").GetComponent<ParticleSystem>();
         shrapnel.Stop();
-
-        health = maxHealth;
-        audioSource = GetComponent<AudioSource>();
-        DJ = GameObject.Find("Player/DJ Wacky").transform;
         exploding = 0;
+        
     }
 
     void FixedUpdate()
     {
-        if(exploding>0) {
-            if(exploding%50 == 0){
-                audioSource.PlayOneShot(alarm, Volume*1.5f);
+        // Low-health warning
+        if(health <= 0.1f * maxHealth && !DeathSounded){
+            DeathSounded = true;
+            for(int i = 0; i < 3; i++){
+                StartCoroutine(Warn(i));
             }
-            if(exploding%5 == 0 && exploding < 25){
-                audioSource.PlayOneShot(BoomBoom, Volume*1.5f);
+        }
+
+        // Death Animation
+        if(exploding > 0) {
+            if(exploding % 50 == 0){
+                audioSource.PlayOneShot(alarm, Volume * 1.5f);
             }
-            
+            if(exploding % 5 == 0 && exploding < 25){
+                audioSource.PlayOneShot(BoomBoom, Volume * 1.5f);
+            }
             if(exploding == 1) {
                 fire.Play();
                 smoke.Play();
@@ -73,39 +64,13 @@ public class ShipController : MonoBehaviour
             }
             exploding++;
         }
-
-        if(health <= 0.1f * maxHealth && !DeathSounded){
-            DeathSounded = true;
-            for(int i = 0; i < 3; i++){
-                StartCoroutine(WaitToPlay(i));
-            }
-            
-        }
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.name == "Player") {
-            if (lerpE != null)
-                StopCoroutine(lerpE);
-            lerpE = LerpObject(EOffScreen, EOnScreen);
-            EcurrentTime = 0;
-            StartCoroutine(lerpE);
-        }
+    public float GetHealth() {
+        return health;
     }
 
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.collider.name == "Player") {
-            if (lerpE != null)
-                StopCoroutine(lerpE);
-            lerpE = LerpObject(EOnScreen, EOffScreen);
-            EcurrentTime = 0;
-            StartCoroutine(lerpE);
-        }
-    }
-
-    public void Hit(float multiplier){
+    public void Hit(float multiplier) {
         health -= multiplier * damageRate * Mathf.Log10(10 + interfaceUtils.GetScore() / 100);
         audioSource.PlayOneShot(alarm, Volume); // StateController.Get<float>("SFX", 0.5f)*0.01f);
         if(health <= 0f) {
@@ -114,27 +79,16 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    IEnumerator LerpObject(Vector3 start, Vector3 end)
-    { 
-        while (EcurrentTime <= Etime) { 
-            EcurrentTime += Time.deltaTime; 
-            EnormalizedValue=EcurrentTime/Etime;    
-            //ERectangleTransform.position += Vector2.Lerp(start, end, EnormalizedValue); 
-            ERectangleTransform.anchoredPosition = Vector3.Lerp(start, end, EnormalizedValue); 
-            yield return null; 
-    }}
+    IEnumerator Warn(int i) {
+        yield return new WaitForSeconds(0.627f * i);
+        audioSource.PlayOneShot(alarm, Volume * 1.5f);
+    }
 
-    IEnumerator Die()
-    {
+    IEnumerator Die() {
         yield return new WaitForSeconds(3);
         PlayerPrefs.SetInt("score", (int)interfaceUtils.GetScore());
         DJ.transform.parent = null;
         DontDestroyOnLoad(DJ);
         SceneManager.LoadScene("GameOver");
-    }
-
-    IEnumerator WaitToPlay(int i){
-        yield return new WaitForSeconds(0.627f * i);
-        audioSource.PlayOneShot(alarm, Volume*1.5f);
     }
 }
