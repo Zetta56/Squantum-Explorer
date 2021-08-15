@@ -272,6 +272,9 @@ MonoBehaviour:
   reject: {fileID: 8300000, guid: c8d486eafc7c8d344aad5704aec4c08d, type: 3}
   maxScrap: 3
   comboDuration: 5
+  combo: 1
+  score: 0
+  scrap: 0
 --- !u!1 &442278115
 GameObject:
   m_ObjectHideFlags: 0
@@ -7260,6 +7263,8 @@ MonoBehaviour:
   asteroid: {fileID: 5610387361080778970, guid: 8f253849b1aa5e64c90f1e92458aee1e, type: 3}
   bossteroid: {fileID: 5610387361080778970, guid: 43ee3d5919d744c4da5fedeb4abe2acc, type: 3}
   hydrasteroid: {fileID: 5610387361080778970, guid: 9575655c81afb03438eb1bdfe2e19422, type: 3}
+  normalSkybox: {fileID: 2100000, guid: 3622d9c438b75994b8adce53ba92f572, type: 2}
+  frozenSkybox: {fileID: 2100000, guid: 2b5322d6a9b058445a46b8971839f30d, type: 2}
   spawnRadius: 150
   spawnInterval: 3
   asteroidSpeed: 5
