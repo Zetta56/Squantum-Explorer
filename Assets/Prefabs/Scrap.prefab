@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8877857680748383145}
   - component: {fileID: 1073175101296294731}
   - component: {fileID: 8838564564435638227}
-  m_Layer: 7
+  m_Layer: 2
   m_Name: Scrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,10 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cf7a6ffee1d66b45871a300d4efc15d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  speed: 10
-  moveSpeed: 100
-  grappling: 0
+  acceleration: 20
 --- !u!135 &8838564564435638227
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -108,7 +105,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6932307521115040380}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.055

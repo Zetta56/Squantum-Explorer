@@ -13,7 +13,8 @@ public class HydrasteroidController : AsteroidController
     public override void DestroyAsteroid() {
         if(gameObject != null && !isDestroying){
             if(!touchingShip) {
-                for(int i=0; i<2; i++){
+                for(int i = 0; i < 2; i++){
+                    // Random position within 6 units of Hydrasteroid
                     Vector3 pos = Random.onUnitSphere * 6 + transform.position;
                     AsteroidController newAsteroidObject = Object.Instantiate(asteroid, pos, 
                         Quaternion.identity, transform.parent).GetComponent<AsteroidController>();

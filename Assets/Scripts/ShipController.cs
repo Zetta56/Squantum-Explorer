@@ -15,7 +15,7 @@ public class ShipController : MonoBehaviour
     // Audio
     private Transform DJ;
     public AudioClip alarm;
-    public AudioClip BoomBoom;
+    public AudioClip explosion;
     private AudioSource audioSource;
     public bool DeathSounded = false;
     public float Volume = 0.3f;
@@ -55,7 +55,7 @@ public class ShipController : MonoBehaviour
                 audioSource.PlayOneShot(alarm, Volume * 1.5f);
             }
             if(exploding % 5 == 0 && exploding < 25){
-                audioSource.PlayOneShot(BoomBoom, Volume * 1.5f);
+                audioSource.PlayOneShot(explosion, Volume * 1.5f);
             }
             if(exploding == 1) {
                 fire.Play();
@@ -71,7 +71,7 @@ public class ShipController : MonoBehaviour
     }
 
     public void Hit(float multiplier) {
-        health -= multiplier * damageRate * Mathf.Log10(10 + interfaceUtils.GetScore() / 100);
+        health -= multiplier * damageRate * Mathf.Log10(10 + interfaceUtils.score / 100);
         audioSource.PlayOneShot(alarm, Volume); // StateController.Get<float>("SFX", 0.5f)*0.01f);
         if(health <= 0f) {
             exploding = 1;
@@ -86,7 +86,7 @@ public class ShipController : MonoBehaviour
 
     IEnumerator Die() {
         yield return new WaitForSeconds(3);
-        PlayerPrefs.SetInt("score", (int)interfaceUtils.GetScore());
+        PlayerPrefs.SetInt("score", (int)interfaceUtils.score);
         DJ.transform.parent = null;
         DontDestroyOnLoad(DJ);
         SceneManager.LoadScene("GameOver");

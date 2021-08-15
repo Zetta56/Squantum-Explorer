@@ -10,58 +10,46 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     [Space(10)]
     public float sensitivity = 0.005f;
-    public float gravity = 0.005f;
-    public float airResistance = 6f;
-    public float maxSpeed = 50f;
+    public float airResistance = 7f;
     public float jetpackSpeed = 700f;
-    public float swingSpeed = 45f;
-    public float sliceSpeed = 100f;
-    public float sliceDistance = 10f;
+    public float swingSpeed = 1f;
+    public float sliceSpeed = 200f;
+    public float sliceDistance = 50f;
     private bool swinging = false;
     private bool slicing = false;
-    private Transform target;
-    private Vector3 targetOffset;
-    private Vector3 targetDirection;
     private float targetDistance;
-    private float swingLength;
     private float mouseX = 0f;
     private float mouseY = 0f;
-    private bool touchingShip = false;
 
     // Audio
     [Space(25)]
     [Header("Sounds")]
     [Space(10)]
     [Range(0.05f, 1f)]
-    public float Volume = 0.3f;
-    [Space(10)]
+    public float volume = 0.3f;
     public AudioClip swingSuccess;
     public AudioClip swingFail;
     public AudioClip reel;
-    public AudioClip pickup;
     public AudioClip swingSound;
     public AudioClip reject;
     public GameObject DJPrefab;
     private GameObject DJ;
     private AudioSource audioSource;
-    private AudioClip currentClip;
 
-    // Scrap
-    [Space(25)]
-    [Header("Scrap")]
-    [Space(10)]
-    public float maxScrap = 10;
-    public float scrap = 0;
-    public float scrapBonus = 0;
-
-    // Others
+    // References
     private Rigidbody rb;
     private GameObject ship;
     private InterfaceUtils interfaceUtils;
     private LineRenderer swingTether;
+    private ParticleSystem speedLines;
+    private AsteroidSpawner asteroidSpawner;
+    private Transform target;
+    private Vector3 targetOffset;
+    private Vector3 targetDirection;
 
     void Awake()
     {
+        // Ensuring DJ Wacky exists when scene is loaded
         DJ = GameObject.Find("DJ Wacky");
         if(DJ == null) {
             GameObject newDJ = Instantiate(DJPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -77,19 +65,32 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
         ship = GameObject.Find("Spaceship");
+        asteroidSpawner = GameObject.Find("Asteroid Spawner").GetComponent<AsteroidSpawner>();
         audioSource = GetComponent<AudioSource>();
-        swingTether = transform.Find("SwingTether").GetComponent<LineRenderer>();
+        swingTether = transform.Find("Swing Tether").GetComponent<LineRenderer>();
         swingTether.enabled = false;
+        speedLines = transform.Find("Speed Lines").GetComponent<ParticleSystem>();
+        speedLines.Stop();
     }
 
     // Update is called once per frame
     void Update()
     {
         // Controls
-        if(!interfaceUtils.GetPauseEnabled()){
+        if(!interfaceUtils.IsPaused()){
             UpdateCamera();
             UpdateTethers();
+            if(Input.GetKeyDown(KeyCode.Space)) {
+                if(interfaceUtils.scrap == interfaceUtils.maxScrap) {
+                    interfaceUtils.scrap = 0f;
+                    asteroidSpawner.Freeze();
+                } else {
+                    PlaySound(reject);
+                }
+            }
         }
+
+        // Pause and unpause
         if(Input.GetKeyDown(KeyCode.Escape)){
             audioSource.Stop();
             interfaceUtils.TogglePause();
@@ -100,11 +101,6 @@ public class PlayerController : MonoBehaviour
     {
         // Air resistance
         rb.AddForce(airResistance * -rb.velocity * Time.fixedDeltaTime);
-
-        // Gravity
-        if(!touchingShip) {
-            rb.position -= new Vector3(0, gravity, 0) * Time.fixedDeltaTime;
-        }
 
         // Jetpack
         Vector3 forwardInput = (Camera.main.transform.forward * Input.GetAxis("Vertical")).normalized;
@@ -118,38 +114,40 @@ public class PlayerController : MonoBehaviour
             targetDistance = Vector3.Distance(target.position + targetOffset, transform.position);
             // Dot product finds current velocity projected on the target direction
             float inwardSpeed = Vector3.Dot(rb.velocity, targetDirection);
-            if(inwardSpeed < 0 && targetDistance > swingLength) {
+            if(inwardSpeed < 0) {
                 // Removing negative inward speed (a.k.a. outward speed) from velocity
                 rb.velocity -= inwardSpeed * targetDirection;
             }
             // Move player towards target at speed scaling with distance
-            rb.velocity += ((Mathf.Clamp(targetDistance, 15, 75)  * swingSpeed - inwardSpeed) * targetDirection * Time.fixedDeltaTime);
-            // Shrink swingLength as player gets closer
-            if(swingLength > targetDistance) {
-                swingLength = targetDistance;
-            }
+            rb.velocity += ((Mathf.Clamp(targetDistance, 30, 120)  * swingSpeed - inwardSpeed) * targetDirection * Time.fixedDeltaTime);
         }
 
         // Slicing
-        if(slicing && target) {
-            swinging = false;
-            rb.velocity = sliceSpeed * Vector3.Normalize(target.position - transform.position);
+        if(slicing) {
+            if(target) {
+                swinging = false;
+                rb.velocity = sliceSpeed * Vector3.Normalize(target.position - transform.position);
+            } else {
+                slicing = false;
+                rb.velocity *= 0.4f;
+                speedLines.Stop();
+            }
+            
         }
     }
 
     void OnCollisionEnter(Collision collision) {
         // Spaceship
         if(collision.collider.name == "Spaceship") {
-            touchingShip = true;
             rb.velocity = new Vector3();    // Stop player movement
         }
 
         // Asteroids
-        if(collision.collider.transform.parent && collision.collider.transform.parent.name == "Asteroid Spawner" &&
-           !collision.gameObject.GetComponent<AsteroidController>().isDestroying
-        ) {
+        AsteroidController asteroid = collision.gameObject.GetComponent<AsteroidController>();
+        if(asteroid != null && !asteroid.isDestroying) {
             if(slicing) {
                 rb.velocity *= 0.4f;
+                speedLines.Stop();
             }
             if(GameObject.ReferenceEquals(target, collision.collider.transform)) {
                 swinging = false;
@@ -159,13 +157,7 @@ public class PlayerController : MonoBehaviour
             }
             interfaceUtils.IncrementCombo();
             audioSource.Stop();
-            collision.gameObject.GetComponent<AsteroidController>().DestroyAsteroid();
-        }
-    }
-
-    void OnCollisionExit(Collision collision) {
-        if(collision.collider.name == "Spaceship") {
-            touchingShip = false;
+            asteroid.DestroyAsteroid();
         }
     }
 
@@ -210,6 +202,7 @@ public class PlayerController : MonoBehaviour
             }
             if(target && target.gameObject.layer == 6 && Vector3.Distance(target.position + targetOffset, transform.position) < sliceDistance) {
                 slicing = true;
+                speedLines.Play();
             }
         }
 
@@ -227,28 +220,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void IncrementScrap(int amount, bool playReject) {
-        if(scrap < maxScrap){
-            float newScrap = scrap + amount + scrapBonus + (interfaceUtils.GetCombo() - 1);
-            scrap = newScrap > maxScrap ? maxScrap : newScrap;
-            PlaySound(pickup);
-        } else if(playReject) {
-            PlaySound(reject);
-        }
-    }
-
     public void PlaySound(AudioClip clip){
-        float vol = clip == reject ? Volume*0.3f : Volume;
-        audioSource.PlayOneShot(clip, vol);
-        currentClip = clip;
-    }
-
-    IEnumerator WaitForAsteroid(AudioClip clip){
-        yield return new WaitForSeconds(0.2f);
-        PlaySound(clip);
-    }
-
-    public float Map(float value, float from1, float to1, float from2, float to2) {
-        return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+        audioSource.PlayOneShot(clip, volume);
     }
 }

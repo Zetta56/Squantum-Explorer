@@ -224,7 +224,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec88b9b7391ff4e4e98d4e48bd631188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scrapPrefab: {fileID: 6932307521115040380, guid: 7f762900966df7c44964430ba3cafdd7, type: 3}
   speed: 0
+  numScrap: 5
   isDestroying: 0
   boom: {fileID: 8300000, guid: cada50be999d2e44a887f3fbf31aaa50, type: 3}
   Volume: 0.3

@@ -32,6 +32,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Pattern:
+        m_Texture: {fileID: 2800000, guid: 3ad019c521c52094d8d5fa58d3a3c09b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -90,6 +94,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Edge_Size: 1.5
+    - Horizontal_Speed: 0
+    - Vertical_Speed: 0
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1

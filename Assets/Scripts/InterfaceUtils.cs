@@ -5,39 +5,52 @@ using TMPro;
 
 public class InterfaceUtils : MonoBehaviour
 {
+    // References
+    public AudioClip pickup;
+    public AudioClip reject;
     private PlayerController player;
     private Camera cam;
     private GameObject ship;
     private ShipController shipController;
     private Transform nearestAsteroid;
+    private AsteroidSpawner asteroidSpawner;
+    private Color purple = new Color(0.4f, 0f, 1f);
+    private Coroutine comboTimer;
+
+    // UI Elements
     private GameObject pause;
-    private Slider durability;
-    private Slider scrap;
+    private Slider healthBar;
+    private Slider scrapBar;
     private TextMeshProUGUI crosshair;
-    private TextMeshProUGUI score;
+    private TextMeshProUGUI scoreText;
     private TextMeshProUGUI comboText;
     private Image comboImage;
     private Image arrow;
     private RectTransform arrowRect;
-    private Coroutine comboTimer;
-    private Color orange = new Color(245f, 150f, 40f);
-    public float comboDuration = 4f;
-    private float previousCombo = 0f;
-    private int combo = 0;
-    private float arrowMargin = 50f;
-    private float scoreValue = 0f;
 
+    // Logic
+    public float maxScrap = 20f;
+    public float comboDuration = 4f;
+    [HideInInspector] public int combo = 1;
+    [HideInInspector] public float score = 0f;
+    [HideInInspector] public float scrap = 0;
+    private float arrowMargin = 50f;
+    private bool maxScrapAlarmed = false;
+    private float previousCombo = 0f;
+    
     // Start is called before the first frame update
     void Start()
     {
+        // Getting references
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         cam = GameObject.Find("Player/Main Camera").GetComponent<Camera>();
         ship = GameObject.Find("Spaceship");
         shipController = ship.GetComponent<ShipController>();
+        asteroidSpawner = GameObject.Find("Asteroid Spawner").GetComponent<AsteroidSpawner>();
         pause = GameObject.Find("UI/Pause");
-        durability = transform.Find("Ship Health").GetComponent<Slider>();
-        scrap = transform.Find("Scrap").GetComponent<Slider>();
-        score = transform.Find("Score").GetComponent<TextMeshProUGUI>();
+        healthBar = transform.Find("Health Bar").GetComponent<Slider>();
+        scrapBar = transform.Find("Scrap Bar").GetComponent<Slider>();
+        scoreText = transform.Find("Score").GetComponent<TextMeshProUGUI>();
         crosshair = transform.Find("Crosshair").GetComponent<TextMeshProUGUI>();
         comboImage = transform.Find("Combo").GetComponent<Image>();
         comboText = transform.Find("Combo/ComboText").GetComponent<TextMeshProUGUI>();
@@ -57,27 +70,21 @@ public class InterfaceUtils : MonoBehaviour
     void Update()
     {
         // Bars
-        durability.value = shipController.GetHealth() / shipController.maxHealth;
-        scrap.value = player.scrap/player.maxScrap;
+        healthBar.value = shipController.GetHealth() / shipController.maxHealth;
+        scrapBar.value = scrap / maxScrap;
 
         // Crosshair
         RaycastHit hit;
         if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, player.sliceDistance, 1 << 6)) {
-            crosshair.color = orange;
-            Debug.Log(crosshair.color);
+            crosshair.color = purple;
         } else if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward)) {
             crosshair.color = Color.red;
         } else {
             crosshair.color = Color.white;
         }
 
-        // Combo
-        if(Time.time - previousCombo > comboDuration){
-            combo = 1;
-        }
-
         // Others
-        score.text = "Score: " + scoreValue.ToString();
+        scoreText.text = "Score: " + score.ToString();
         UpdateArrow();
     }
 
@@ -123,20 +130,43 @@ public class InterfaceUtils : MonoBehaviour
         }
     }
 
-    public float GetScore() {
-        return scoreValue;
-    }
-
-    public bool GetPauseEnabled() {
+    public bool IsPaused() {
         return pause.activeSelf;
     }
 
-    public int GetCombo() {
-        return combo;
+    public void IncrementScore(float amount) {
+        score += amount * combo;
     }
 
-    public void IncrementScore(float increment) {
-        scoreValue += increment * combo;
+    public void IncrementScrap(int amount) {
+        if(scrap < maxScrap && !asteroidSpawner.frozen){
+            float newScrap = scrap + amount;
+            scrap = newScrap > maxScrap ? maxScrap : newScrap;
+            maxScrapAlarmed = false;
+            player.PlaySound(pickup);
+        } else if(!maxScrapAlarmed) {
+            maxScrapAlarmed = true;
+            player.PlaySound(reject);
+        }
+    }
+
+    public void IncrementCombo(){
+        if(Time.time - previousCombo <= comboDuration){
+            combo++;
+            comboText.text = "x" + combo;
+            comboText.enabled = true;
+            comboImage.enabled = true;
+            TickCombo();
+        }
+        previousCombo = Time.time;
+    }
+
+    // Separated from IncrementCombo() for more usability in other scripts
+    public void TickCombo() {
+        if (comboTimer != null) {
+            StopCoroutine(comboTimer);
+        }
+        comboTimer = StartCoroutine(HideCombo());
     }
 
     public void TogglePause() {
@@ -152,26 +182,22 @@ public class InterfaceUtils : MonoBehaviour
         }
     }
 
-
-
-    public void IncrementCombo(){
-        if(Time.time - previousCombo <= comboDuration){
-            combo++;
-            comboText.text = "x" + combo;
-            comboText.enabled = true;
-            comboImage.enabled = true;
-            // Start combo timer
-            if (comboTimer != null) {
-                StopCoroutine(comboTimer);
-            }
-            comboTimer = StartCoroutine(HideCombo());
+    public IEnumerator HideCombo() {
+        // yield return new WaitForSeconds(comboDuration);
+        // do {
+        //     if(!asteroidSpawner.frozen) {
+        //         comboText.enabled = false;
+        //         comboImage.enabled = false;
+        //         combo = 1;
+        //     } else {
+        //         yield return new WaitForSeconds(comboDuration);
+        //     }
+        // } while(asteroidSpawner.frozen);
+        yield return new WaitForSeconds(comboDuration);
+        if(!asteroidSpawner.frozen) {
+            comboText.enabled = false;
+            comboImage.enabled = false;
+            combo = 1;
         }
-        previousCombo = Time.time;
-    }
-
-    IEnumerator HideCombo() {
-        yield return new WaitForSeconds(4f);
-        comboText.enabled = false;
-        comboImage.enabled = false;
     }
 }

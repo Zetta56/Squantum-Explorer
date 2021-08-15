@@ -4,33 +4,29 @@ using UnityEngine;
 
 public class ScrapController : MonoBehaviour
 {
-
-    public Transform target;
-    public float speed = 10f;
-    public float moveSpeed = 100f;
-    public bool grappling;
-    private GameObject player;
+    public float acceleration = 20f;
+    private float speed = 0f;
+    private Transform player;
+    private InterfaceUtils interfaceUtils;
+    private Rigidbody rb;
 
     void Start()
     {
-        player = GameObject.Find("Player");
-        grappling = false;
+        player = GameObject.Find("Player").transform;
+        interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
+        rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if(!grappling){
-            transform.RotateAround(target.position, Vector3.up, speed * Time.deltaTime);
-        }else{
-            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, moveSpeed * Time.deltaTime);
-        }
+        transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+        speed += acceleration * Time.fixedDeltaTime;
     }
 
     void OnCollisionEnter(Collision collision) {
         if(collision.collider.name == "Player") {
             Destroy(gameObject);
-            player.GetComponent<PlayerController>().IncrementScrap(1, true);
+            interfaceUtils.IncrementScrap(1);
         }
     }
 }
