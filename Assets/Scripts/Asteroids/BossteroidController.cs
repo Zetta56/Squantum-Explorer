@@ -10,6 +10,7 @@ public class BossteroidController : AsteroidController
     private Rigidbody playerRB;
 
     void Start(){
+        base.Start();
         playerRB = player.gameObject.GetComponent<Rigidbody>();
         transform.Find("Break").GetComponent<Renderer>().material = GetComponent<Renderer>().material;
         transform.localScale *= bossScale + 1;
@@ -20,7 +21,6 @@ public class BossteroidController : AsteroidController
         if(gameObject != null && !isDestroying){
             health--;
             audioSource.PlayOneShot(boom, Volume);//StateController.Get<float>("SFX", 0.5f)*0.01f);
-            em.enabled = true;
             fragments.Play();
             
             if(health <= 0 || touchingShip){

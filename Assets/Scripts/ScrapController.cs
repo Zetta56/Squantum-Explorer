@@ -19,8 +19,10 @@ public class ScrapController : MonoBehaviour
 
     void FixedUpdate()
     {
-        transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
-        speed += acceleration * Time.fixedDeltaTime;
+        if(!GameManager.Instance.frozen) {
+            transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+            speed += acceleration * Time.fixedDeltaTime;
+        }
     }
 
     void OnCollisionEnter(Collision collision) {

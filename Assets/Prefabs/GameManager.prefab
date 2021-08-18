@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4506841042575059054}
   - component: {fileID: 6940760325031756648}
-  - component: {fileID: 1180888379015297383}
+  - component: {fileID: 112726373373975180}
   m_Layer: 0
-  m_Name: DJ Wacky
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53,7 +53,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 1.01
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -128,7 +128,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1180888379015297383
+--- !u!114 &112726373373975180
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1471785116145173675}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4aaea6e424c90b4eaee4fda0bbad6e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 69a0dd7eff939914c845d908aac9d47e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  frozen: 0

@@ -13,7 +13,6 @@ public class InterfaceUtils : MonoBehaviour
     private GameObject ship;
     private ShipController shipController;
     private Transform nearestAsteroid;
-    private AsteroidSpawner asteroidSpawner;
     private Color purple = new Color(0.4f, 0f, 1f);
     private Coroutine comboTimer;
 
@@ -46,7 +45,6 @@ public class InterfaceUtils : MonoBehaviour
         cam = GameObject.Find("Player/Main Camera").GetComponent<Camera>();
         ship = GameObject.Find("Spaceship");
         shipController = ship.GetComponent<ShipController>();
-        asteroidSpawner = GameObject.Find("Asteroid Spawner").GetComponent<AsteroidSpawner>();
         pause = GameObject.Find("UI/Pause");
         healthBar = transform.Find("Health Bar").GetComponent<Slider>();
         scrapBar = transform.Find("Scrap Bar").GetComponent<Slider>();
@@ -139,7 +137,7 @@ public class InterfaceUtils : MonoBehaviour
     }
 
     public void IncrementScrap(int amount) {
-        if(scrap < maxScrap && !asteroidSpawner.frozen){
+        if(scrap < maxScrap && !GameManager.Instance.frozen){
             float newScrap = scrap + amount;
             scrap = newScrap > maxScrap ? maxScrap : newScrap;
             maxScrapAlarmed = false;
@@ -183,18 +181,8 @@ public class InterfaceUtils : MonoBehaviour
     }
 
     public IEnumerator HideCombo() {
-        // yield return new WaitForSeconds(comboDuration);
-        // do {
-        //     if(!asteroidSpawner.frozen) {
-        //         comboText.enabled = false;
-        //         comboImage.enabled = false;
-        //         combo = 1;
-        //     } else {
-        //         yield return new WaitForSeconds(comboDuration);
-        //     }
-        // } while(asteroidSpawner.frozen);
         yield return new WaitForSeconds(comboDuration);
-        if(!asteroidSpawner.frozen) {
+        if(!GameManager.Instance.frozen) {
             comboText.enabled = false;
             comboImage.enabled = false;
             combo = 1;

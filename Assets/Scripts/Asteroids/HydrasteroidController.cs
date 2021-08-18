@@ -7,6 +7,7 @@ public class HydrasteroidController : AsteroidController
     public GameObject asteroid;
 
     void Start(){
+        base.Start();
         transform.Find("Break").GetComponent<Renderer>().material = GetComponent<Renderer>().material;
     }
 

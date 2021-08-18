@@ -6,13 +6,13 @@ using UnityEngine.SceneManagement;
 public class Buttons : MonoBehaviour
 {
 
-	private AudioSource DJ;
+	private AudioSource audioSource;
 	public AudioClip ButtonPress;
 	[Range(0.5f, 2f)]
-    public float Volume = 1f;
+  public float Volume = 1f;
 
 	void Start() {
-		DJ = GameObject.Find("DJ Wacky").GetComponent<AudioSource>();
+		audioSource = GameObject.Find("GameManager").GetComponent<AudioSource>();
 	}
 
 	public void SetHasPlayed() {
@@ -27,8 +27,8 @@ public class Buttons : MonoBehaviour
 			menu.Find("Screen2").gameObject.SetActive(true);
 		} else {
 			if(SceneManager.GetActiveScene().name != "MainMenu"){
-				DJ.Stop();
-				DJ.Play();
+				audioSource.Stop();
+				audioSource.Play();
 			}
 			SceneManager.LoadScene("Main");
 			Time.timeScale = 1;
@@ -48,6 +48,6 @@ public class Buttons : MonoBehaviour
 	}
 
 	public void ButtonNoise(){
-		DJ.PlayOneShot(ButtonPress, 2f);
+		audioSource.PlayOneShot(ButtonPress, 2f);
 	}
 }

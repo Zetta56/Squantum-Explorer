@@ -921,7 +921,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1471785116145173675, guid: 2569883cd9a59aa4f9ac031f012439db, type: 3}
       propertyPath: m_Name
-      value: DJ Wacky
+      value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 4506841042575059054, guid: 2569883cd9a59aa4f9ac031f012439db, type: 3}
       propertyPath: m_RootOrder

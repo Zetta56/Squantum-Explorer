@@ -16,7 +16,9 @@ public class AsteroidSpawner : MonoBehaviour
     public GameObject hydrasteroid;
     private Transform ship;
     private InterfaceUtils interfaceUtils;
-    private Vector3 pos;
+    private MeshRenderer forceField;
+    private Shader forceFieldShader;
+    private Shader frozenFieldShader;
 
     // Logic
     public int spawnRadius = 200;
@@ -24,7 +26,7 @@ public class AsteroidSpawner : MonoBehaviour
     public float asteroidSpeed = 5f;
     public float minBottomAngle = 60f;
     public float freezeDuration = 10f;
-    public bool frozen = false;
+    private Vector3 pos;
     private float angle;
 
     // Spawn Chances
@@ -40,12 +42,17 @@ public class AsteroidSpawner : MonoBehaviour
     {
         ship = GameObject.Find("Spaceship").transform;
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
+        forceField = GameObject.Find("Force Field").GetComponent<MeshRenderer>();
+        forceFieldShader = Shader.Find("Shader Graphs/ForceField");
+        frozenFieldShader = Shader.Find("Shader Graphs/FrozenField");
+        
         StartCoroutine(SpawnAsteroid());
     }
 
     public void Freeze()
     {
-        frozen = true;
+        GameManager.Instance.frozen = true;
+        forceField.material.shader = frozenFieldShader;
         AsteroidController[] asteroids = GetComponentsInChildren<AsteroidController>();
         foreach(AsteroidController asteroid in asteroids) {
             asteroid.speed = 0f;
@@ -56,7 +63,7 @@ public class AsteroidSpawner : MonoBehaviour
     IEnumerator SpawnAsteroid() {
         yield return new WaitForSeconds(1f);
         while (true) {
-            if(!frozen) {
+            if(!GameManager.Instance.frozen) {
                 do {
                     pos = Random.onUnitSphere * spawnRadius;
                     angle = Vector3.Angle(pos - ship.position, Vector3.down);
@@ -81,7 +88,8 @@ public class AsteroidSpawner : MonoBehaviour
 
     IEnumerator Unfreeze() {
         yield return new WaitForSeconds(freezeDuration);
-        frozen = false;
+        GameManager.Instance.frozen = false;
+        forceField.material.shader = forceFieldShader;
         AsteroidController[] asteroids = GetComponentsInChildren<AsteroidController>();
         foreach(AsteroidController asteroid in asteroids) {
             asteroid.speed = asteroidSpeed;

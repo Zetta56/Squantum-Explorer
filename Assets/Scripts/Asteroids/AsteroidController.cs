@@ -14,24 +14,19 @@ public class AsteroidController : MonoBehaviour
     protected Transform target;
     protected ParticleSystem fragments;
     protected AudioSource audioSource;
-    protected AsteroidSpawner asteroidSpawner;
-    protected ParticleSystem.EmissionModule em;
     protected Rigidbody rb;
     protected InterfaceUtils interfaceUtils;
     protected PlayerController player;
     protected bool touchingShip; 
 
-    protected void Awake(){
-        em = transform.Find("Break").GetComponent<ParticleSystem>().emission;
-        em.enabled = false;
-
+    protected void Start(){
         audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
-        asteroidSpawner = GameObject.Find("Asteroid Spawner").GetComponent<AsteroidSpawner>();
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         target = GameObject.Find("Spaceship").transform;
         fragments = transform.Find("Break").GetComponent<ParticleSystem>();
+        fragments.Stop();
     }
 
     // Update is called once per frame
@@ -46,9 +41,8 @@ public class AsteroidController : MonoBehaviour
         if(gameObject != null && !isDestroying){
             // Effects
             audioSource.PlayOneShot(boom, Volume);
-            em.enabled = true;
             fragments.Play();
-            if(!touchingShip && !asteroidSpawner.frozen) {
+            if(!touchingShip && !GameManager.Instance.frozen) {
                 interfaceUtils.IncrementScore(100);
                 for(int i = 0; i < numScrap; i++){
                     Vector3 pos = Random.onUnitSphere * 10 + transform.position;

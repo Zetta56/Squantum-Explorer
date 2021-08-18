@@ -29,11 +29,8 @@ public class PlayerController : MonoBehaviour
     public float volume = 0.3f;
     public AudioClip swingSuccess;
     public AudioClip swingFail;
-    public AudioClip reel;
     public AudioClip swingSound;
     public AudioClip reject;
-    public GameObject DJPrefab;
-    private GameObject DJ;
     private AudioSource audioSource;
 
     // References
@@ -46,18 +43,6 @@ public class PlayerController : MonoBehaviour
     private Transform target;
     private Vector3 targetOffset;
     private Vector3 targetDirection;
-
-    void Awake()
-    {
-        // Ensuring DJ Wacky exists when scene is loaded
-        DJ = GameObject.Find("DJ Wacky");
-        if(DJ == null) {
-            GameObject newDJ = Instantiate(DJPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            newDJ.transform.parent = transform;
-            newDJ.name = "DJ Wacky";
-            DJ = newDJ;
-        }
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -84,6 +69,7 @@ public class PlayerController : MonoBehaviour
                 if(interfaceUtils.scrap == interfaceUtils.maxScrap) {
                     interfaceUtils.scrap = 0f;
                     asteroidSpawner.Freeze();
+                    PlaySound(swingSuccess);
                 } else {
                     PlaySound(reject);
                 }

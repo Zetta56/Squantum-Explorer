@@ -13,7 +13,6 @@ public class ShipController : MonoBehaviour
     private ParticleSystem fire, smoke, shrapnel;
 
     // Audio
-    private Transform DJ;
     public AudioClip alarm;
     public AudioClip explosion;
     private AudioSource audioSource;
@@ -25,7 +24,6 @@ public class ShipController : MonoBehaviour
     {   
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
         audioSource = GetComponent<AudioSource>();
-        DJ = GameObject.Find("Player/DJ Wacky").transform;
         health = maxHealth;
 
         // Particle Initialization
@@ -87,8 +85,6 @@ public class ShipController : MonoBehaviour
     IEnumerator Die() {
         yield return new WaitForSeconds(3);
         PlayerPrefs.SetInt("score", (int)interfaceUtils.score);
-        DJ.transform.parent = null;
-        DontDestroyOnLoad(DJ);
         SceneManager.LoadScene("GameOver");
     }
 }
