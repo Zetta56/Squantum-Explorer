@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
             UpdateCamera();
             UpdateTethers();
             if(Input.GetKeyDown(KeyCode.Space)) {
-                if(interfaceUtils.scrap == interfaceUtils.scrapCap) {
+                if(interfaceUtils.scrap >= interfaceUtils.scrapCap) {
                     interfaceUtils.scrap = 0f;
                     GameManager.Instance.frozen = true;
                     forceField.ToggleFrozen(true);
