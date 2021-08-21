@@ -227,9 +227,9 @@ MonoBehaviour:
   scrapPrefab: {fileID: 6932307521115040380, guid: 7f762900966df7c44964430ba3cafdd7, type: 3}
   speed: 0
   numScrap: 5
-  isDestroying: 0
   boom: {fileID: 8300000, guid: cada50be999d2e44a887f3fbf31aaa50, type: 3}
   Volume: 0.3
+  damage: 10
   bossScale: 0
   health: 2
   push: 50
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 1350883957472622378}
   - component: {fileID: 7571879066028943620}
   m_Layer: 0
-  m_Name: Break
+  m_Name: Fragments
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

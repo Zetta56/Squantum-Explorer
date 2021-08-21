@@ -5,9 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    // Movement
+    // Controls
     [Space(25)]
-    [Header("Movement")]
+    [Header("Controls")]
     [Space(10)]
     public float sensitivity = 0.005f;
     public float airResistance = 7f;
@@ -15,11 +15,7 @@ public class PlayerController : MonoBehaviour
     public float swingSpeed = 1f;
     public float sliceSpeed = 200f;
     public float sliceDistance = 50f;
-    private bool swinging = false;
-    private bool slicing = false;
-    private float targetDistance;
-    private float mouseX = 0f;
-    private float mouseY = 0f;
+    public float freezeDuration = 10f;
 
     // Audio
     [Space(25)]
@@ -36,13 +32,22 @@ public class PlayerController : MonoBehaviour
     // References
     private Rigidbody rb;
     private GameObject ship;
+    private ShipController shipController;
     private InterfaceUtils interfaceUtils;
     private LineRenderer swingTether;
     private ParticleSystem speedLines;
     private AsteroidSpawner asteroidSpawner;
+    private ForceFieldController forceField;
+
+    // Logic
     private Transform target;
     private Vector3 targetOffset;
     private Vector3 targetDirection;
+    private float targetDistance;
+    private bool swinging = false;
+    private bool slicing = false;
+    private float mouseX = 0f;
+    private float mouseY = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -50,8 +55,10 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
         ship = GameObject.Find("Spaceship");
+        shipController = ship.GetComponent<ShipController>();
         asteroidSpawner = GameObject.Find("Asteroid Spawner").GetComponent<AsteroidSpawner>();
         audioSource = GetComponent<AudioSource>();
+        forceField = GameObject.Find("Force Field").GetComponent<ForceFieldController>();
         swingTether = transform.Find("Swing Tether").GetComponent<LineRenderer>();
         swingTether.enabled = false;
         speedLines = transform.Find("Speed Lines").GetComponent<ParticleSystem>();
@@ -66,9 +73,11 @@ public class PlayerController : MonoBehaviour
             UpdateCamera();
             UpdateTethers();
             if(Input.GetKeyDown(KeyCode.Space)) {
-                if(interfaceUtils.scrap == interfaceUtils.maxScrap) {
+                if(interfaceUtils.scrap == interfaceUtils.scrapCap) {
                     interfaceUtils.scrap = 0f;
-                    asteroidSpawner.Freeze();
+                    GameManager.Instance.frozen = true;
+                    forceField.ToggleFrozen(true);
+                    StartCoroutine(Unfreeze());
                     PlaySound(swingSuccess);
                 } else {
                     PlaySound(reject);
@@ -130,7 +139,7 @@ public class PlayerController : MonoBehaviour
 
         // Asteroids
         AsteroidController asteroid = collision.gameObject.GetComponent<AsteroidController>();
-        if(asteroid != null && !asteroid.isDestroying) {
+        if(asteroid != null && !asteroid.GetDestroying()) {
             if(slicing) {
                 rb.velocity *= 0.4f;
                 speedLines.Stop();
@@ -143,7 +152,7 @@ public class PlayerController : MonoBehaviour
             }
             interfaceUtils.IncrementCombo();
             audioSource.Stop();
-            asteroid.DestroyAsteroid();
+            asteroid.Break();
         }
     }
 
@@ -160,6 +169,8 @@ public class PlayerController : MonoBehaviour
     {
         // Swing Action
         if(Input.GetMouseButtonDown(0)) {
+            // Slow down player when grappling
+            rb.velocity *= 0.75f;
             RaycastHit hit;
             // out allows changes made to 'hit' to persist after leaving Raycast() function's scope
             if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit)) {
@@ -208,5 +219,13 @@ public class PlayerController : MonoBehaviour
 
     public void PlaySound(AudioClip clip){
         audioSource.PlayOneShot(clip, volume);
+    }
+
+    IEnumerator Unfreeze() {
+        yield return new WaitForSeconds(freezeDuration);
+        GameManager.Instance.frozen = false;
+        forceField.ToggleFrozen(false);
+        shipController.IncrementHitTime(freezeDuration);
+        interfaceUtils.TickCombo();
     }
 }

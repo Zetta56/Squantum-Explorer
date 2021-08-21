@@ -28,14 +28,18 @@ public class InterfaceUtils : MonoBehaviour
     private RectTransform arrowRect;
 
     // Logic
-    public float maxScrap = 20f;
+    public float maxScrap = 30f;
+    public float minScrap = 20f;
+    // public float upgradeInterval = 3000f;
     public float comboDuration = 4f;
     [HideInInspector] public int combo = 1;
-    [HideInInspector] public float score = 0f;
-    [HideInInspector] public float scrap = 0;
+    [HideInInspector] public float score;
+    [HideInInspector] public float scrap;
+    [HideInInspector] public float scrapCap;
     private float arrowMargin = 50f;
-    private bool maxScrapAlarmed = false;
+    private bool scrapAlarmed = false;
     private float previousCombo = 0f;
+    // private float nextUpgrade;
     
     // Start is called before the first frame update
     void Start()
@@ -56,6 +60,7 @@ public class InterfaceUtils : MonoBehaviour
         arrowRect = transform.Find("Arrow").GetComponent<RectTransform>();
 
         // Turning off situational UI elements
+        scrapCap = maxScrap;
         pause.SetActive(false);
         comboImage.enabled = false;
         comboText.enabled = false;
@@ -69,7 +74,7 @@ public class InterfaceUtils : MonoBehaviour
     {
         // Bars
         healthBar.value = shipController.GetHealth() / shipController.maxHealth;
-        scrapBar.value = scrap / maxScrap;
+        scrapBar.value = scrap / scrapCap;
 
         // Crosshair
         RaycastHit hit;
@@ -134,16 +139,20 @@ public class InterfaceUtils : MonoBehaviour
 
     public void IncrementScore(float amount) {
         score += amount * combo;
+        if(scrapCap > minScrap) {
+            scrapCap = Mathf.Round(maxScrap - score / 1500);
+            scrapCap = scrapCap < minScrap ? minScrap : scrapCap;
+        }
     }
 
     public void IncrementScrap(int amount) {
-        if(scrap < maxScrap && !GameManager.Instance.frozen){
+        if(scrap < scrapCap && !GameManager.Instance.frozen){
             float newScrap = scrap + amount;
-            scrap = newScrap > maxScrap ? maxScrap : newScrap;
-            maxScrapAlarmed = false;
+            scrap = newScrap > scrapCap ? scrapCap : newScrap;
+            scrapAlarmed = false;
             player.PlaySound(pickup);
-        } else if(!maxScrapAlarmed) {
-            maxScrapAlarmed = true;
+        } else if(!scrapAlarmed) {
+            scrapAlarmed = true;
             player.PlaySound(reject);
         }
     }

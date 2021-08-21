@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BossteroidController : AsteroidController
 {
-    public float bossScale = 0f;
     public float health = 2f;
     public float push = 100f;
     private Rigidbody playerRB;
@@ -12,28 +11,26 @@ public class BossteroidController : AsteroidController
     void Start(){
         base.Start();
         playerRB = player.gameObject.GetComponent<Rigidbody>();
-        transform.Find("Break").GetComponent<Renderer>().material = GetComponent<Renderer>().material;
-        transform.localScale *= bossScale + 1;
-        health *= bossScale + 1;
+        transform.Find("Fragments").GetComponent<Renderer>().material = GetComponent<Renderer>().material;
     }
 
-    public override void DestroyAsteroid() {
+    public override void Break() {
         if(gameObject != null && !isDestroying){
             health--;
             audioSource.PlayOneShot(boom, Volume);//StateController.Get<float>("SFX", 0.5f)*0.01f);
             fragments.Play();
             
             if(health <= 0 || touchingShip){
-                base.DestroyAsteroid();
+                base.Break();
             } else{
                 playerRB.velocity = push * -playerRB.velocity.normalized;
-                StartCoroutine(TurnOffBreak());
+                StartCoroutine(TurnOffFragments());
             }
             
         }
     }
 
-    IEnumerator TurnOffBreak()
+    IEnumerator TurnOffFragments()
     {
         yield return new WaitForSeconds(1f);
         fragments.Stop();

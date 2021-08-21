@@ -5,19 +5,24 @@ using UnityEngine.SceneManagement;
 
 public class ShipController : MonoBehaviour
 {
-    public float maxHealth = 100f;
-    public float damageRate = 5f;
-    private float health;
-    private int exploding;
+    // References
     private InterfaceUtils interfaceUtils;
     private ParticleSystem fire, smoke, shrapnel;
 
     // Audio
     public AudioClip alarm;
     public AudioClip explosion;
-    private AudioSource audioSource;
     public bool DeathSounded = false;
     public float Volume = 0.3f;
+    private AudioSource audioSource;
+
+    // Logic
+    public float maxHealth = 100f;
+    public float regenTimer = 10f;
+    public float regenRate = 1f;
+    private float hitTime;
+    private float health;
+    private int exploding;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +44,10 @@ public class ShipController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(hitTime + regenTimer <= Time.time && !GameManager.Instance.frozen) {
+            health += regenRate * Time.fixedDeltaTime;
+        }
+
         // Low-health warning
         if(health <= 0.1f * maxHealth && !DeathSounded){
             DeathSounded = true;
@@ -68,13 +77,18 @@ public class ShipController : MonoBehaviour
         return health;
     }
 
-    public void Hit(float multiplier) {
-        health -= multiplier * damageRate * Mathf.Log10(10 + interfaceUtils.score / 100);
+    public void IncrementHitTime(float increment) {
+        hitTime += increment;
+    }
+
+    public void Hit(float damage) {
+        health -= damage * Mathf.Log10(10 + interfaceUtils.score / 100);
         audioSource.PlayOneShot(alarm, Volume); // StateController.Get<float>("SFX", 0.5f)*0.01f);
         if(health <= 0f) {
             exploding = 1;
             StartCoroutine(Die());
         }
+        hitTime = Time.time;
     }
 
     IEnumerator Warn(int i) {

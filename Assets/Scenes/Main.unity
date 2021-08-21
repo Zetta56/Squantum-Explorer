@@ -270,7 +270,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickup: {fileID: 8300000, guid: 9a6a9235f54e24e40b67f6b531cfbe5c, type: 3}
   reject: {fileID: 8300000, guid: c8d486eafc7c8d344aad5704aec4c08d, type: 3}
-  maxScrap: 24
+  maxScrap: 30
+  minScrap: 20
+  upgradeInterval: 200
   comboDuration: 5
   combo: 1
   score: 0
@@ -7174,7 +7176,6 @@ MonoBehaviour:
   spawnInterval: 3
   asteroidSpeed: 5
   minBottomAngle: 60
-  freezeDuration: 10
   HydraChance: 0.1
   BossChance: 0.1
 --- !u!1 &1567565454
@@ -7714,6 +7715,7 @@ MonoBehaviour:
   swingSpeed: 1.25
   sliceSpeed: 200
   sliceDistance: 50
+  freezeDuration: 10
   volume: 0.3
   swingSuccess: {fileID: 8300000, guid: a9e88a28fa68b004faabe8aa3fdb4ad0, type: 3}
   swingFail: {fileID: 8300000, guid: a5b10984f4140ba41872131e4f369209, type: 3}
@@ -8369,6 +8371,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 289301614986012343, guid: 1e5fe588ed4857d43bf6131af7caa79e, type: 3}
+--- !u!114 &1935134500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935134498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca2a3f8819d64e4ea9a75b4510a80b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1982539406
 GameObject:
   m_ObjectHideFlags: 0
@@ -8622,8 +8636,16 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1495462929186986358, guid: ef7b05e90d34cda49883d3ba43c06ef2, type: 3}
+      propertyPath: regenRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495462929186986358, guid: ef7b05e90d34cda49883d3ba43c06ef2, type: 3}
       propertyPath: damageRate
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495462929186986358, guid: ef7b05e90d34cda49883d3ba43c06ef2, type: 3}
+      propertyPath: regenTimer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3488006478170219315, guid: ef7b05e90d34cda49883d3ba43c06ef2, type: 3}
       propertyPath: m_CollisionDetection

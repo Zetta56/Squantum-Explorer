@@ -7,9 +7,9 @@ public class AsteroidController : MonoBehaviour
     public GameObject scrapPrefab;
     public float speed = 5f;
     public int numScrap = 3;
-    public bool isDestroying = false;
     public AudioClip boom;
     public float Volume = 0.3f;
+    public float damage = 4f;
 
     protected Transform target;
     protected ParticleSystem fragments;
@@ -17,7 +17,8 @@ public class AsteroidController : MonoBehaviour
     protected Rigidbody rb;
     protected InterfaceUtils interfaceUtils;
     protected PlayerController player;
-    protected bool touchingShip; 
+    protected bool touchingShip = false;
+    protected bool isDestroying = false;
 
     protected void Start(){
         audioSource = GetComponent<AudioSource>();
@@ -25,26 +26,37 @@ public class AsteroidController : MonoBehaviour
         interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         target = GameObject.Find("Spaceship").transform;
-        fragments = transform.Find("Break").GetComponent<ParticleSystem>();
+        fragments = transform.Find("Fragments").GetComponent<ParticleSystem>();
         fragments.Stop();
     }
 
     // Update is called once per frame
     protected void Update()
     {
-        transform.LookAt(target);
-        rb.velocity = transform.forward * speed;
+        if(!GameManager.Instance.frozen) {
+            transform.LookAt(target);
+            rb.velocity = transform.forward * speed;
+        } else {
+            rb.velocity = Vector3.zero;
+        }
+    }
+
+    public bool GetDestroying() {
+        return isDestroying;
     }
 
     // Virtual indicates that method should be overwritten
-    public virtual void DestroyAsteroid() {
+    public virtual void Break() {
         if(gameObject != null && !isDestroying){
             // Effects
             audioSource.PlayOneShot(boom, Volume);
             fragments.Play();
-            if(!touchingShip && !GameManager.Instance.frozen) {
+
+            // Counters
+            if(!touchingShip) {
+                float actualScrap = GameManager.Instance.frozen ? 1 : numScrap;
                 interfaceUtils.IncrementScore(100);
-                for(int i = 0; i < numScrap; i++){
+                for(int i = 0; i < actualScrap; i++){
                     Vector3 pos = Random.onUnitSphere * 10 + transform.position;
                     Object.Instantiate(scrapPrefab, pos, Quaternion.identity, transform.parent);
                 }
@@ -61,9 +73,9 @@ public class AsteroidController : MonoBehaviour
     {
         if (!isDestroying && collision.collider.name == "Spaceship") {
             ShipController ship = collision.gameObject.GetComponent<ShipController>();
-            ship.Hit(1);
             touchingShip = true;
-            DestroyAsteroid();
+            ship.Hit(damage);
+            Break();
         }
     }
 }

@@ -8,10 +8,10 @@ public class HydrasteroidController : AsteroidController
 
     void Start(){
         base.Start();
-        transform.Find("Break").GetComponent<Renderer>().material = GetComponent<Renderer>().material;
+        transform.Find("Fragments").GetComponent<Renderer>().material = GetComponent<Renderer>().material;
     }
 
-    public override void DestroyAsteroid() {
+    public override void Break() {
         if(gameObject != null && !isDestroying){
             if(!touchingShip) {
                 for(int i = 0; i < 2; i++){
@@ -22,7 +22,7 @@ public class HydrasteroidController : AsteroidController
                     newAsteroidObject.speed = speed;
                 }
             }
-            base.DestroyAsteroid();
+            base.Break();
         }
     }
 }
