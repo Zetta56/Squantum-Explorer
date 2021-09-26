@@ -80,7 +80,10 @@ public class InterfaceUtils : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, player.sliceDistance, 1 << 6)) {
             crosshair.color = purple;
-        } else if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward)) {
+        } else if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward) ||
+            Physics.SphereCast(Camera.main.transform.position, player.GetAimAssistSize(),
+            Camera.main.transform.forward, out hit, Mathf.Infinity, 1 << 6)
+        ) {
             crosshair.color = Color.red;
         } else {
             crosshair.color = Color.white;

@@ -44,7 +44,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5610387361080778970}
-  m_Mesh: {fileID: -8066124491767452352, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
+  m_Mesh: {fileID: -8066124491767452352, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
 --- !u!23 &6259130351082275087
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5090,8 +5090,8 @@ ParticleSystemRenderer:
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
   m_VertexStreams: 00010304
-  m_Mesh: {fileID: -688602771959139187, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
-  m_Mesh1: {fileID: -2314889690101908075, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
-  m_Mesh2: {fileID: 4507555510371623389, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
-  m_Mesh3: {fileID: 5665568821005082828, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
+  m_Mesh: {fileID: -688602771959139187, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
+  m_Mesh1: {fileID: -2314889690101908075, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
+  m_Mesh2: {fileID: 4507555510371623389, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
+  m_Mesh3: {fileID: 5665568821005082828, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
   m_MaskInteraction: 0

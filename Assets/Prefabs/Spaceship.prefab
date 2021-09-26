@@ -728,7 +728,7 @@ ParticleSystem:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-    m_Mesh: {fileID: -5495902117074765545, guid: cfa9c66baaa1289448f6d47423d3ffd1, type: 3}
+    m_Mesh: {fileID: -5495902117074765545, guid: d16bf6541656e4d4a843aa3eb25175b9, type: 3}
     m_MeshRenderer: {fileID: 0}
     m_SkinnedMeshRenderer: {fileID: 0}
     m_Sprite: {fileID: 0}
@@ -4859,10 +4859,10 @@ ParticleSystemRenderer:
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
   m_VertexStreams: 00010304
-  m_Mesh: {fileID: -2875539014680195922, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
-  m_Mesh1: {fileID: 4805718611651401619, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
-  m_Mesh2: {fileID: 2468075458756096582, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
-  m_Mesh3: {fileID: -3885240404940365887, guid: 255b00dc82a22304ba9c0d85a5f317ec, type: 3}
+  m_Mesh: {fileID: -2875539014680195922, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
+  m_Mesh1: {fileID: 4805718611651401619, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
+  m_Mesh2: {fileID: 2468075458756096582, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
+  m_Mesh3: {fileID: -3885240404940365887, guid: b5e4dee27cbf8ff4ab8b4e17590c240a, type: 3}
   m_MaskInteraction: 0
 --- !u!1 &393137253460646738
 GameObject:
@@ -4911,7 +4911,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 393137253460646738}
-  m_Mesh: {fileID: -5495902117074765545, guid: cfa9c66baaa1289448f6d47423d3ffd1, type: 3}
+  m_Mesh: {fileID: -5495902117074765545, guid: d16bf6541656e4d4a843aa3eb25175b9, type: 3}
 --- !u!23 &2194458426649688711
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4968,7 +4968,7 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: -5495902117074765545, guid: cfa9c66baaa1289448f6d47423d3ffd1, type: 3}
+  m_Mesh: {fileID: -5495902117074765545, guid: d16bf6541656e4d4a843aa3eb25175b9, type: 3}
 --- !u!54 &3488006478170219315
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4997,12 +4997,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a8386bae37d83a4381d35cdcc3a022a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  damageRate: 5
   alarm: {fileID: 8300000, guid: 47af15aa275939e49821bef6a5da353e, type: 3}
-  BoomBoom: {fileID: 0}
+  explosion: {fileID: 0}
   DeathSounded: 0
   Volume: 0.3
+  maxHealth: 100
+  regenTimer: 10
+  regenRate: 1
 --- !u!82 &1863761140
 AudioSource:
   m_ObjectHideFlags: 0

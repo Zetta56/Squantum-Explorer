@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [Header("Controls")]
     [Space(10)]
     public float sensitivity = 0.005f;
+    public float aimAssistSize = 25f;
     public float airResistance = 7f;
     public float jetpackSpeed = 700f;
     public float swingSpeed = 1f;
@@ -48,7 +49,7 @@ public class PlayerController : MonoBehaviour
     private bool slicing = false;
     private float mouseX = 0f;
     private float mouseY = 0f;
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -139,7 +140,7 @@ public class PlayerController : MonoBehaviour
 
         // Asteroids
         AsteroidController asteroid = collision.gameObject.GetComponent<AsteroidController>();
-        if(asteroid != null && !asteroid.GetDestroying()) {
+        if(asteroid != null && !asteroid.IsDestroying()) {
             if(slicing) {
                 rb.velocity *= 0.4f;
                 speedLines.Stop();
@@ -156,7 +157,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void UpdateCamera()
+    public void PlaySound(AudioClip clip){
+        audioSource.PlayOneShot(clip, volume);
+    }
+
+    public float GetAimAssistSize() {
+        return aimAssistSize;
+    }
+
+    private void UpdateCamera()
     {
         mouseX += Input.GetAxis("Mouse X") * sensitivity;
         mouseY += Input.GetAxis("Mouse Y") * sensitivity;
@@ -165,15 +174,17 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(new Vector4(-mouseY * 180f, mouseX * 360f, transform.rotation.z));
     }
 
-    void UpdateTethers()
+    private void UpdateTethers()
     {
         // Swing Action
         if(Input.GetMouseButtonDown(0)) {
             // Slow down player when grappling
             rb.velocity *= 0.75f;
             RaycastHit hit;
-            // out allows changes made to 'hit' to persist after leaving Raycast() function's scope
-            if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit)) {
+            // Check if player is looking at a collider (with aim-assist for layer 6 asteroids)
+            // Note: out allows changes made to 'hit' to persist after leaving function scope
+            if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit) ||
+               Physics.SphereCast(Camera.main.transform.position, aimAssistSize, Camera.main.transform.forward, out hit, Mathf.Infinity, 1 << 6)) {
                 target = hit.transform;
                 targetOffset = hit.point - target.position;
                 swinging = true;
@@ -215,10 +226,6 @@ public class PlayerController : MonoBehaviour
             swinging = false;
             swingTether.enabled = false;
         }
-    }
-
-    public void PlaySound(AudioClip clip){
-        audioSource.PlayOneShot(clip, volume);
     }
 
     IEnumerator Unfreeze() {

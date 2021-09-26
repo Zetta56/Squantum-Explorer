@@ -41,7 +41,7 @@ public class AsteroidController : MonoBehaviour
         }
     }
 
-    public bool GetDestroying() {
+    public bool IsDestroying() {
         return isDestroying;
     }
 
