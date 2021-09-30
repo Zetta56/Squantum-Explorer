@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class BossteroidController : AsteroidController
 {
-    public float health = 2f;
-    public float push = 100f;
+    [SerializeField] private float health = 2f;
+    [SerializeField] private float push = 100f;
     private Rigidbody playerRB;
 
     void Start(){

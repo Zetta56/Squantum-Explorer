@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HydrasteroidController : AsteroidController
 {
-    public GameObject asteroid;
+    [SerializeField] private GameObject asteroid;
 
     void Start(){
         base.Start();
@@ -19,7 +19,7 @@ public class HydrasteroidController : AsteroidController
                     Vector3 pos = Random.onUnitSphere * 6 + transform.position;
                     AsteroidController newAsteroidObject = Object.Instantiate(asteroid, pos, 
                         Quaternion.identity, transform.parent).GetComponent<AsteroidController>();
-                    newAsteroidObject.speed = speed;
+                    newAsteroidObject.SetSpeed(speed);
                 }
             }
             base.Break();

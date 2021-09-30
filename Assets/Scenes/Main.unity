@@ -273,10 +273,6 @@ MonoBehaviour:
   maxScrap: 30
   minScrap: 20
   comboDuration: 5
-  combo: 1
-  score: 0
-  scrap: 0
-  scrapCap: 0
 --- !u!1 &442278115
 GameObject:
   m_ObjectHideFlags: 0
@@ -7172,7 +7168,7 @@ MonoBehaviour:
   asteroid: {fileID: 5610387361080778970, guid: 8f253849b1aa5e64c90f1e92458aee1e, type: 3}
   bossteroid: {fileID: 5610387361080778970, guid: 43ee3d5919d744c4da5fedeb4abe2acc, type: 3}
   hydrasteroid: {fileID: 5610387361080778970, guid: 9575655c81afb03438eb1bdfe2e19422, type: 3}
-  spawnRadius: 150
+  spawnRadius: 180
   spawnInterval: 3
   asteroidSpeed: 5
   minBottomAngle: 60

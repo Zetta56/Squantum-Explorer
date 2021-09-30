@@ -5,11 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class Buttons : MonoBehaviour
 {
-
+	[SerializeField] private AudioClip ButtonPress;
+	[SerializeField] private float Volume = 1f;
 	private AudioSource audioSource;
-	public AudioClip ButtonPress;
-	[Range(0.5f, 2f)]
-  public float Volume = 1f;
+  
 
 	void Start() {
 		audioSource = GameObject.Find("GameManager").GetComponent<AudioSource>();
@@ -36,18 +35,20 @@ public class Buttons : MonoBehaviour
 	}
 
 	public void Menu(){
+		PlaySound();
 		Time.timeScale = 1;
 		SceneManager.LoadScene("MainMenu");
 	}
 
 	public void Unpause() {
+		PlaySound();
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 		Time.timeScale = 1;
 		
 	}
 
-	public void ButtonNoise(){
-		audioSource.PlayOneShot(ButtonPress, 2f);
+	public void PlaySound() {
+		audioSource.PlayOneShot(ButtonPress, Volume);
 	}
 }

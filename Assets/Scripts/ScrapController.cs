@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScrapController : MonoBehaviour
 {
-    public float acceleration = 20f;
+    [SerializeField] private float acceleration = 20f;
     private float speed = 0f;
     private Transform player;
     private InterfaceUtils interfaceUtils;

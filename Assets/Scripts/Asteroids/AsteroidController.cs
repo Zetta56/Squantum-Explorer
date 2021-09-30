@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class AsteroidController : MonoBehaviour
 {
-    public GameObject scrapPrefab;
-    public float speed = 5f;
-    public int numScrap = 3;
-    public AudioClip boom;
-    public float Volume = 0.3f;
-    public float damage = 4f;
-
+    // References
+    [SerializeField] protected GameObject scrapPrefab;
+    [SerializeField] protected AudioClip boom;
     protected Transform target;
     protected ParticleSystem fragments;
     protected AudioSource audioSource;
     protected Rigidbody rb;
     protected InterfaceUtils interfaceUtils;
     protected PlayerController player;
+
+    // Logic
+    [SerializeField] protected int numScrap = 3;
+    [SerializeField] protected float Volume = 0.3f;
+    [SerializeField] protected float damage = 4f;
+    protected float speed = 5f;
     protected bool touchingShip = false;
     protected bool isDestroying = false;
 
@@ -43,6 +45,10 @@ public class AsteroidController : MonoBehaviour
 
     public bool IsDestroying() {
         return isDestroying;
+    }
+
+    public void SetSpeed(float speed) {
+        this.speed = speed;
     }
 
     // Virtual indicates that method should be overwritten

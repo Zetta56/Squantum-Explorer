@@ -6,14 +6,13 @@ using TMPro;
 public class InterfaceUtils : MonoBehaviour
 {
     // References
-    public AudioClip pickup;
-    public AudioClip reject;
+    [SerializeField] private AudioClip pickup;
+    [SerializeField] private AudioClip reject;
     private PlayerController player;
     private Camera cam;
     private GameObject ship;
     private ShipController shipController;
     private Transform nearestAsteroid;
-    private Color purple = new Color(0.4f, 0f, 1f);
     private Coroutine comboTimer;
 
     // UI Elements
@@ -28,23 +27,21 @@ public class InterfaceUtils : MonoBehaviour
     private RectTransform arrowRect;
 
     // Logic
-    public float maxScrap = 30f;
-    public float minScrap = 20f;
-    // public float upgradeInterval = 3000f;
-    public float comboDuration = 4f;
-    [HideInInspector] public int combo = 1;
-    [HideInInspector] public float score;
-    [HideInInspector] public float scrap;
-    [HideInInspector] public float scrapCap;
+    [SerializeField] private float maxScrap = 30f;
+    [SerializeField] private float minScrap = 20f;
+    [SerializeField] private float comboDuration = 4f;
+    private int combo = 1;
+    private float score;
+    private float scrap;
+    private float scrapCap;  // Scrap limit that changes during runtime
     private float arrowMargin = 50f;
     private bool scrapAlarmed = false;
     private float previousCombo = 0f;
-    // private float nextUpgrade;
     
     // Start is called before the first frame update
     void Start()
     {
-        // Getting references
+        // References
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         cam = GameObject.Find("Player/Main Camera").GetComponent<Camera>();
         ship = GameObject.Find("Spaceship");
@@ -73,13 +70,13 @@ public class InterfaceUtils : MonoBehaviour
     void Update()
     {
         // Bars
-        healthBar.value = shipController.GetHealth() / shipController.maxHealth;
+        healthBar.value = shipController.GetHealth() / shipController.GetMaxHealth();
         scrapBar.value = scrap / scrapCap;
 
         // Crosshair
         RaycastHit hit;
-        if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, player.sliceDistance, 1 << 6)) {
-            crosshair.color = purple;
+        if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, player.GetSliceDistance(), 1 << 6)) {
+            crosshair.color = GameManager.Instance.purple;
         } else if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward) ||
             Physics.SphereCast(Camera.main.transform.position, player.GetAimAssistSize(),
             Camera.main.transform.forward, out hit, Mathf.Infinity, 1 << 6)
@@ -140,8 +137,25 @@ public class InterfaceUtils : MonoBehaviour
         return pause.activeSelf;
     }
 
+    public float GetScore() {
+        return score;
+    }
+
+    public float GetScrapCap() {
+        return scrapCap;
+    }
+
+    public float GetScrap() {
+        return scrap;
+    }
+
+    public void SetScrap(float scrap) {
+        this.scrap = scrap;
+    }
+
     public void IncrementScore(float amount) {
         score += amount * combo;
+        // Lower the current scrap cap if it is above minScrap
         if(scrapCap > minScrap) {
             scrapCap = Mathf.Round(maxScrap - score / 1500);
             scrapCap = scrapCap < minScrap ? minScrap : scrapCap;

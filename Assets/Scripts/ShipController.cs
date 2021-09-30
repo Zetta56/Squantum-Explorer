@@ -10,16 +10,16 @@ public class ShipController : MonoBehaviour
     private ParticleSystem fire, smoke, shrapnel;
 
     // Audio
-    public AudioClip alarm;
-    public AudioClip explosion;
-    public bool DeathSounded = false;
-    public float Volume = 0.3f;
+    [SerializeField] private AudioClip alarm;
+    [SerializeField] private AudioClip explosion;
+    [SerializeField] private float Volume = 0.3f;
     private AudioSource audioSource;
+    private bool deathSounded = false;
 
     // Logic
-    public float maxHealth = 100f;
-    public float regenTimer = 10f;
-    public float regenRate = 1f;
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float regenTimer = 10f;
+    [SerializeField] private float regenRate = 1f;
     private float hitTime;
     private float health;
     private int exploding;
@@ -49,8 +49,8 @@ public class ShipController : MonoBehaviour
         }
 
         // Low-health warning
-        if(health <= 0.1f * maxHealth && !DeathSounded){
-            DeathSounded = true;
+        if(health <= 0.1f * maxHealth && !deathSounded){
+            deathSounded = true;
             for(int i = 0; i < 3; i++){
                 StartCoroutine(Warn(i));
             }
@@ -77,12 +77,16 @@ public class ShipController : MonoBehaviour
         return health;
     }
 
+    public float GetMaxHealth() {
+        return maxHealth;
+    }
+
     public void IncrementHitTime(float increment) {
         hitTime += increment;
     }
 
     public void Hit(float damage) {
-        health -= damage * Mathf.Log10(10 + interfaceUtils.score / 100);
+        health -= damage * Mathf.Log10(10 + interfaceUtils.GetScore() / 100);
         audioSource.PlayOneShot(alarm, Volume); // StateController.Get<float>("SFX", 0.5f)*0.01f);
         if(health <= 0f) {
             exploding = 1;
@@ -98,7 +102,7 @@ public class ShipController : MonoBehaviour
 
     IEnumerator Die() {
         yield return new WaitForSeconds(3);
-        PlayerPrefs.SetInt("score", (int)interfaceUtils.score);
+        PlayerPrefs.SetInt("score", (int)interfaceUtils.GetScore());
         SceneManager.LoadScene("GameOver");
     }
 }

@@ -6,28 +6,24 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     // Controls
-    [Space(25)]
     [Header("Controls")]
-    [Space(10)]
-    public float sensitivity = 0.005f;
-    public float aimAssistSize = 25f;
-    public float airResistance = 7f;
-    public float jetpackSpeed = 700f;
-    public float swingSpeed = 1f;
-    public float sliceSpeed = 200f;
-    public float sliceDistance = 50f;
-    public float freezeDuration = 10f;
+    [SerializeField] private float sensitivity = 0.005f;
+    [SerializeField] private float aimAssistSize = 25f;
+    [SerializeField] private float airResistance = 7f;
+    [SerializeField] private float jetpackSpeed = 700f;
+    [SerializeField] private float swingSpeed = 1f;
+    [SerializeField] private float sliceSpeed = 200f;
+    [SerializeField] private float sliceDistance = 50f;
+    [SerializeField] private float freezeDuration = 10f;
 
     // Audio
-    [Space(25)]
     [Header("Sounds")]
-    [Space(10)]
     [Range(0.05f, 1f)]
-    public float volume = 0.3f;
-    public AudioClip swingSuccess;
-    public AudioClip swingFail;
-    public AudioClip swingSound;
-    public AudioClip reject;
+    [SerializeField] private float volume = 0.3f;
+    [SerializeField] private AudioClip swingSuccess;
+    [SerializeField] private AudioClip swingFail;
+    [SerializeField] private AudioClip swingSound;
+    [SerializeField] private AudioClip reject;
     private AudioSource audioSource;
 
     // References
@@ -40,7 +36,8 @@ public class PlayerController : MonoBehaviour
     private AsteroidSpawner asteroidSpawner;
     private ForceFieldController forceField;
 
-    // Logic
+    // Mouse
+    private Color tetherBaseColor;
     private Transform target;
     private Vector3 targetOffset;
     private Vector3 targetDirection;
@@ -62,6 +59,7 @@ public class PlayerController : MonoBehaviour
         forceField = GameObject.Find("Force Field").GetComponent<ForceFieldController>();
         swingTether = transform.Find("Swing Tether").GetComponent<LineRenderer>();
         swingTether.enabled = false;
+        tetherBaseColor = swingTether.material.color;
         speedLines = transform.Find("Speed Lines").GetComponent<ParticleSystem>();
         speedLines.Stop();
     }
@@ -74,8 +72,8 @@ public class PlayerController : MonoBehaviour
             UpdateCamera();
             UpdateTethers();
             if(Input.GetKeyDown(KeyCode.Space)) {
-                if(interfaceUtils.scrap >= interfaceUtils.scrapCap) {
-                    interfaceUtils.scrap = 0f;
+                if(interfaceUtils.GetScrap() >= interfaceUtils.GetScrapCap()) {
+                    interfaceUtils.SetScrap(0f);
                     GameManager.Instance.frozen = true;
                     forceField.ToggleFrozen(true);
                     StartCoroutine(Unfreeze());
@@ -107,7 +105,6 @@ public class PlayerController : MonoBehaviour
         // Swinging
         if(swinging && target) {
             targetDirection = Vector3.Normalize(target.position + targetOffset - transform.position);
-            targetDistance = Vector3.Distance(target.position + targetOffset, transform.position);
             // Dot product finds current velocity projected on the target direction
             float inwardSpeed = Vector3.Dot(rb.velocity, targetDirection);
             if(inwardSpeed < 0) {
@@ -115,7 +112,14 @@ public class PlayerController : MonoBehaviour
                 rb.velocity -= inwardSpeed * targetDirection;
             }
             // Move player towards target at speed scaling with distance
-            rb.velocity += ((Mathf.Clamp(targetDistance, 30, 120)  * swingSpeed - inwardSpeed) * targetDirection * Time.fixedDeltaTime);
+            rb.velocity += ((Mathf.Clamp(GetTargetDistance(), 30, 120) *
+                swingSpeed - inwardSpeed) * targetDirection * Time.fixedDeltaTime);
+            // Recolor tether color based on distance
+            if (GetTargetDistance() < sliceDistance && target.gameObject.layer == 6) {
+                swingTether.material.color = GameManager.Instance.purple;
+            } else {
+                swingTether.material.color = tetherBaseColor;
+            }
         }
 
         // Slicing
@@ -165,6 +169,14 @@ public class PlayerController : MonoBehaviour
         return aimAssistSize;
     }
 
+    public float GetSliceDistance() {
+        return sliceDistance;
+    }
+
+    public float GetTargetDistance() {
+        return Vector3.Distance(target.position + targetOffset, transform.position);
+    }
+
     private void UpdateCamera()
     {
         mouseX += Input.GetAxis("Mouse X") * sensitivity;
@@ -205,10 +217,11 @@ public class PlayerController : MonoBehaviour
         // Slice Action
         if(Input.GetMouseButtonDown(1)) {
             RaycastHit hit;
+            // Change target to asteroid straight ahead if facing one
             if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, sliceDistance, 1 << 6)) {
                 target = hit.transform;
             }
-            if(target && target.gameObject.layer == 6 && Vector3.Distance(target.position + targetOffset, transform.position) < sliceDistance) {
+            if(target && target.gameObject.layer == 6 && GetTargetDistance() < sliceDistance) {
                 slicing = true;
                 speedLines.Play();
             }

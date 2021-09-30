@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     // Static variables are tied to the game, not the current scene
     // Since GameManager is a getter, 'get' is public and 'set' is private
     public static GameManager Instance { get; private set; }
+    public Color purple = new Color(0.4f, 0f, 1f);
     public bool frozen;
 
     private void Awake()
