@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 335567954}
   - component: {fileID: 335567955}
   m_Layer: 5
-  m_Name: Interface
+  m_Name: HUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -683,7 +683,7 @@ GameObject:
   - component: {fileID: 660093395}
   - component: {fileID: 660093396}
   m_Layer: 0
-  m_Name: Swing Tether
+  m_Name: Tether
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -813,7 +813,6 @@ GameObject:
   - component: {fileID: 703661615}
   - component: {fileID: 703661617}
   - component: {fileID: 703661616}
-  - component: {fileID: 703661618}
   - component: {fileID: 703661619}
   m_Layer: 0
   m_Name: Main Camera
@@ -887,18 +886,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &703661618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 703661614}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &703661619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7494,6 +7481,7 @@ GameObject:
   - component: {fileID: 1665638882}
   - component: {fileID: 1665638883}
   - component: {fileID: 1665638881}
+  - component: {fileID: 1665638884}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -7705,19 +7693,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc6fc985f1eace46e966d61b65c77eed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  airResistance: 7
+  moveSpeed: 700
+  freezeDuration: 10
+  frozenSky: {fileID: 2100000, guid: 7da75abb0a84b9d45b8d49d8d6c4ba61, type: 2}
+  volume: 0.3
+  freeze: {fileID: 8300000, guid: b800ef78dbe451b40851863401e30282, type: 3}
+  actionDenied: {fileID: 8300000, guid: c8d486eafc7c8d344aad5704aec4c08d, type: 3}
+  forceFieldHit: {fileID: 8300000, guid: d7745c67ac30bab4a91923414b4fea12, type: 3}
+--- !u!114 &1665638884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665638876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a8c9964a3c9a3d4d99a19771f01d6f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   sensitivity: 0.005
   aimAssistSize: 15
-  airResistance: 7
-  jetpackSpeed: 700
   swingSpeed: 1.25
   sliceSpeed: 200
   sliceDistance: 50
-  freezeDuration: 10
   volume: 0.3
   swingSuccess: {fileID: 8300000, guid: a9e88a28fa68b004faabe8aa3fdb4ad0, type: 3}
   swingFail: {fileID: 8300000, guid: a5b10984f4140ba41872131e4f369209, type: 3}
   swingSound: {fileID: 8300000, guid: 6a37c41be8ed9464fb69e954b5abd143, type: 3}
-  reject: {fileID: 8300000, guid: c8d486eafc7c8d344aad5704aec4c08d, type: 3}
 --- !u!1 &1774929946
 GameObject:
   m_ObjectHideFlags: 0
@@ -8280,7 +8284,6 @@ GameObject:
   - component: {fileID: 1935134502}
   - component: {fileID: 1935134501}
   - component: {fileID: 1935134499}
-  - component: {fileID: 1935134500}
   m_Layer: 2
   m_Name: Force Field
   m_TagString: Untagged
@@ -8302,18 +8305,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 289301614986012343, guid: f8d79f5e9aa12ee409db0f2cf75070e9, type: 3}
---- !u!114 &1935134500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935134498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ca2a3f8819d64e4ea9a75b4510a80b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!23 &1935134501
 MeshRenderer:
   m_ObjectHideFlags: 0

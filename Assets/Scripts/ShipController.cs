@@ -6,15 +6,8 @@ using UnityEngine.SceneManagement;
 public class ShipController : MonoBehaviour
 {
     // References
-    private InterfaceUtils interfaceUtils;
+    private HUDUtils HUDUtils;
     private ParticleSystem fire, smoke, shrapnel;
-
-    // Audio
-    [SerializeField] private AudioClip alarm;
-    [SerializeField] private AudioClip explosion;
-    [SerializeField] private float Volume = 0.3f;
-    private AudioSource audioSource;
-    private bool deathSounded = false;
 
     // Logic
     [SerializeField] private float maxHealth = 100f;
@@ -24,10 +17,19 @@ public class ShipController : MonoBehaviour
     private float health;
     private int exploding;
 
+    // Audio
+    [Header("Sounds")]
+    [Range(0.05f, 1f)]
+    [SerializeField] private float Volume = 0.3f;
+    [SerializeField] private AudioClip alarm;
+    [SerializeField] private AudioClip explosion;
+    private AudioSource audioSource;
+    private bool deathSounded = false;
+
     // Start is called before the first frame update
     void Start()
     {   
-        interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
+        HUDUtils = GameObject.Find("UI/HUD").GetComponent<HUDUtils>();
         audioSource = GetComponent<AudioSource>();
         health = maxHealth;
 
@@ -86,7 +88,7 @@ public class ShipController : MonoBehaviour
     }
 
     public void Hit(float damage) {
-        health -= damage * Mathf.Log10(10 + interfaceUtils.GetScore() / 100);
+        health -= damage * Mathf.Log10(10 + HUDUtils.GetScore() / 100);
         audioSource.PlayOneShot(alarm, Volume); // StateController.Get<float>("SFX", 0.5f)*0.01f);
         if(health <= 0f) {
             exploding = 1;
@@ -102,7 +104,7 @@ public class ShipController : MonoBehaviour
 
     IEnumerator Die() {
         yield return new WaitForSeconds(3);
-        PlayerPrefs.SetInt("score", (int)interfaceUtils.GetScore());
+        PlayerPrefs.SetInt("score", (int)HUDUtils.GetScore());
         SceneManager.LoadScene("GameOver");
     }
 }

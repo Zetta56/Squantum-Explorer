@@ -11,7 +11,7 @@ public class AsteroidController : MonoBehaviour
     protected ParticleSystem fragments;
     protected AudioSource audioSource;
     protected Rigidbody rb;
-    protected InterfaceUtils interfaceUtils;
+    protected HUDUtils HUDUtils;
     protected PlayerController player;
 
     // Logic
@@ -25,7 +25,7 @@ public class AsteroidController : MonoBehaviour
     protected void Start(){
         audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
-        interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
+        HUDUtils = GameObject.Find("UI/HUD").GetComponent<HUDUtils>();
         player = GameObject.Find("Player").GetComponent<PlayerController>();
         target = GameObject.Find("Spaceship").transform;
         fragments = transform.Find("Fragments").GetComponent<ParticleSystem>();
@@ -61,7 +61,7 @@ public class AsteroidController : MonoBehaviour
             // Counters
             if(!touchingShip) {
                 float actualScrap = GameManager.Instance.frozen ? 1 : numScrap;
-                interfaceUtils.IncrementScore(100);
+                HUDUtils.IncrementScore(100);
                 for(int i = 0; i < actualScrap; i++){
                     Vector3 pos = Random.onUnitSphere * 10 + transform.position;
                     Object.Instantiate(scrapPrefab, pos, Quaternion.identity, transform.parent);

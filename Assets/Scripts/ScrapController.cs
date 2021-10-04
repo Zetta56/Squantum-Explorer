@@ -7,13 +7,13 @@ public class ScrapController : MonoBehaviour
     [SerializeField] private float acceleration = 20f;
     private float speed = 0f;
     private Transform player;
-    private InterfaceUtils interfaceUtils;
+    private HUDUtils HUDUtils;
     private Rigidbody rb;
 
     void Start()
     {
         player = GameObject.Find("Player").transform;
-        interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
+        HUDUtils = GameObject.Find("UI/HUD").GetComponent<HUDUtils>();
         rb = GetComponent<Rigidbody>();
     }
 
@@ -28,7 +28,7 @@ public class ScrapController : MonoBehaviour
     void OnCollisionEnter(Collision collision) {
         if(collision.collider.name == "Player") {
             Destroy(gameObject);
-            interfaceUtils.IncrementScrap(1);
+            HUDUtils.IncrementScrap(1);
         }
     }
 }

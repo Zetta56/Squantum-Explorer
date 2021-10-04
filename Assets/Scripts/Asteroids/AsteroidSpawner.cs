@@ -9,7 +9,7 @@ public class AsteroidSpawner : MonoBehaviour
     [SerializeField] private GameObject bossteroid;
     [SerializeField] private GameObject hydrasteroid;
     private Transform ship;
-    private InterfaceUtils interfaceUtils;
+    private HUDUtils HUDUtils;
 
     // Logic
     [SerializeField] private int spawnRadius = 200;
@@ -29,7 +29,7 @@ public class AsteroidSpawner : MonoBehaviour
     void Start()
     {
         ship = GameObject.Find("Spaceship").transform;
-        interfaceUtils = GameObject.Find("UI/Interface").GetComponent<InterfaceUtils>();
+        HUDUtils = GameObject.Find("UI/HUD").GetComponent<HUDUtils>();
         StartCoroutine(SpawnAsteroid());
     }
 
@@ -54,9 +54,9 @@ public class AsteroidSpawner : MonoBehaviour
                 } while(angle < minBottomAngle);
                 // Instantiate asteroid and set its speed
                 GameObject newAsteroid = Object.Instantiate(PickAsteroid(), pos, Quaternion.identity, transform);
-                newAsteroid.GetComponent<AsteroidController>().SetSpeed(asteroidSpeed * Mathf.Log10(10f + interfaceUtils.GetScore() / 100));
+                newAsteroid.GetComponent<AsteroidController>().SetSpeed(asteroidSpeed * Mathf.Log10(10f + HUDUtils.GetScore() / 100));
             }
-            yield return new WaitForSeconds(spawnInterval * (1 / Mathf.Log10(10f + interfaceUtils.GetScore() / 1000)));
+            yield return new WaitForSeconds(spawnInterval * (1 / Mathf.Log10(10f + HUDUtils.GetScore() / 1000)));
         }
     }
 }

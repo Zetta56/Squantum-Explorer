@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public Color purple = new Color(0.4f, 0f, 1f);
     public bool frozen;
+    public bool paused;
 
     private void Awake()
     {
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
     {
         if(scene.name == "Main"){
             frozen = false;
+            paused = false;
         }
     }
 }
